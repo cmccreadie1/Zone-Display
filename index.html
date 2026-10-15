@@ -196,7 +196,7 @@
 
         function loadLiveDrawJSON() {
             // Fetch live_draw.json directly from the repository root
-            fetch('./live_draw.json?v=' + new Date().getTime())
+            fetch('live_draw.json?v=' + new Date().getTime())
                 .then(response => {
                     if (!response.ok) throw new Error("live_draw.json not found");
                     return response.json();
