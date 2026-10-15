@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shorescore Competitor Draw Viewer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Barlow Condensed & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pixelBlue: '#a8c7fa',
+                        pixelGold: '#fde047',
+                        pixelEmerald: '#4ade80',
+                        pixelCyan: '#38bdf8',
+                        pixelCoral: '#f87171',
+                        pixelMuted: '#cbd5e1',
+                        pixelText: '#ffffff'
+                    },
+                    fontFamily: {
+                        heading: ['Barlow Condensed', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { color-scheme: dark; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: radial-gradient(circle at 50% 0%, #1e3a8a 0%, #1e293b 65%, #0f172a 100%) fixed;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Barlow Condensed', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .font-mono-tabular {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border-radius: 28px;
+        }
+
+        .glass-card-sm {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1.5px solid rgba(255, 255, 255, 0.18);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            border-radius: 9999px;
+        }
+
+        .zone-badge-Red { background: rgba(239, 68, 68, 0.65); border: 2px solid #f87171; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .zone-badge-Yellow { background: rgba(234, 179, 8, 0.65); border: 2px solid #fde047; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .zone-badge-Green { background: rgba(34, 197, 94, 0.65); border: 2px solid #4ade80; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        .zone-badge-Blue { background: rgba(14, 165, 233, 0.65); border: 2px solid #38bdf8; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+        .zone-card-Red { background: rgba(239, 68, 68, 0.28); border-top: 6px solid #f87171; border-color: rgba(248, 113, 113, 0.6); }
+        .zone-card-Yellow { background: rgba(234, 179, 8, 0.28); border-top: 6px solid #fde047; border-color: rgba(253, 224, 71, 0.6); }
+        .zone-card-Green { background: rgba(34, 197, 94, 0.28); border-top: 6px solid #4ade80; border-color: rgba(74, 222, 128, 0.6); }
+        .zone-card-Blue { background: rgba(14, 165, 233, 0.28); border-top: 6px solid #38bdf8; border-color: rgba(56, 189, 248, 0.6); }
+
+        .touch-elastic {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .touch-elastic:active { transform: scale(0.96); }
+
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(168, 199, 250, 0.5); border-radius: 9999px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
+
+    <!-- HEADER BAR -->
+    <header class="bg-slate-950/80 backdrop-blur-2xl border-b border-white/20 sticky top-0 z-40 shadow-2xl">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-pixelBlue/25 border border-pixelBlue/50 flex items-center justify-center text-pixelBlue">
+                    <i class="fa-solid fa-water text-xl"></i>
+                </div>
+                <div>
+                    <h1 id="headerCompTitle" class="text-xl sm:text-2xl font-black font-heading text-pixelText leading-none uppercase tracking-wider">Shorescore Draw Viewer</h1>
+                    <span id="headerDurationBadge" class="text-[11px] font-black text-pixelEmerald uppercase tracking-wider font-heading">Live Competitor Allocations</span>
+                </div>
+            </div>
+
+            <span id="headerTotalAnglersBadge" class="text-xs font-black glass-pill px-3.5 py-1.5 text-pixelBlue border border-pixelBlue/40 font-mono-tabular uppercase">
+                0 Anglers
+            </span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-3 sm:px-6 py-6 w-full space-y-6 flex-grow">
+
+        <!-- NO DATA / MISSING JSON WARNING -->
+        <div id="noDataPanel" class="glass-card p-8 sm:p-12 text-center space-y-4">
+            <div class="w-16 h-16 rounded-full bg-pixelCoral/25 border border-pixelCoral/50 flex items-center justify-center text-pixelCoral mx-auto">
+                <i class="fa-solid fa-file-circle-exclamation text-3xl"></i>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black font-heading text-pixelText uppercase tracking-wider">No Draw Data Found</h2>
+            <p class="text-pixelMuted text-sm sm:text-base max-w-md mx-auto font-medium">
+                Please upload the <code class="text-pixelBlue bg-slate-900 px-2 py-1 rounded font-mono-tabular">live_draw.json</code> file exported from Shorescore to this repository.
+            </p>
+        </div>
+
+        <!-- MAIN VIEWER CONTENT CONTAINER -->
+        <div id="viewerMainContent" class="hidden space-y-6">
+
+            <!-- SECTION 1: PERSONAL ANGLER LOOKUP (TOP DASHBOARD) -->
+            <div class="glass-card p-6 sm:p-8 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-xs font-black uppercase tracking-wider text-pixelBlue font-heading">
+                        <i class="fa-solid fa-magnifying-glass mr-1.5"></i> Find My Draw & Teammates
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-5 py-4 text-pixelText font-bold text-base uppercase tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name (e.g. McCreadie)...">
+                        <button onclick="clearSearchInput()" class="absolute right-4 top-3.5 w-9 h-9 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
+                    </div>
+                </div>
+
+                <!-- PERSONAL RESULT CARD CONTAINER -->
+                <div id="personalResultCardContainer"></div>
+            </div>
+
+            <!-- SECTION 2: FULL VENUE BEACH MATRIX -->
+            <div class="glass-card p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/20 pb-5">
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2.5 uppercase tracking-wider">
+                            <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
+                        </h3>
+                        <p class="text-xs sm:text-sm text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
+                    </div>
+
+                    <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
+                    <div id="beachDayToggleGroup" class="flex items-center gap-2 self-stretch sm:self-auto hidden">
+                        <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
+                            Day 1
+                        </button>
+                        <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
+                            Day 2
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4-ZONE CARD GRID -->
+                <div id="fullBeachZoneGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- VIEWER ENGINE SCRIPT -->
+    <script>
+        let viewerData = null;
+        let activeBeachDay = 1;
+
+        const ZONE_COLORS = ['Red', 'Yellow', 'Green', 'Blue'];
+
+        window.onload = function() {
+            loadLiveDrawJSON();
+        };
+
+        function loadLiveDrawJSON() {
+            // Fetch live_draw.json directly from the repository root
+            fetch('./live_draw.json?v=' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) throw new Error("live_draw.json not found");
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.anglers && data.draw) {
+                        viewerData = data;
+                        renderHeaderDetails();
+                        document.getElementById('noDataPanel').classList.add('hidden');
+                        document.getElementById('viewerMainContent').classList.remove('hidden');
+                        renderPersonalCard(null);
+                        renderFullBeachMatrix();
+                    } else {
+                        showNoDataWarning();
+                    }
+                })
+                .catch(err => {
+                    console.warn("Could not load live_draw.json", err);
+                    showNoDataWarning();
+                });
+        }
+
+        function showNoDataWarning() {
+            document.getElementById('noDataPanel').classList.remove('hidden');
+            document.getElementById('viewerMainContent').classList.add('hidden');
+        }
+
+        function renderHeaderDetails() {
+            document.getElementById('headerCompTitle').innerText = viewerData.title || "Shore Competition";
+            document.getElementById('headerDurationBadge').innerText = viewerData.duration === 2 ? '2-Day Competition' : '1-Day Competition';
+            document.getElementById('headerTotalAnglersBadge').innerText = `${viewerData.anglers.length} Anglers`;
+
+            const dayToggleGroup = document.getElementById('beachDayToggleGroup');
+            if (viewerData.duration === 2) dayToggleGroup.classList.remove('hidden');
+            else dayToggleGroup.classList.add('hidden');
+        }
+
+        function handleAnglerSearch() {
+            const query = (document.getElementById('anglerSearchInput').value || '').trim().toLowerCase();
+            if (query.length < 2) {
+                renderPersonalCard(null);
+                return;
+            }
+
+            const matchedAngler = viewerData.anglers.find(a => (a.name || '').toLowerCase().includes(query));
+            renderPersonalCard(matchedAngler || null);
+        }
+
+        function clearSearchInput() {
+            document.getElementById('anglerSearchInput').value = '';
+            renderPersonalCard(null);
+        }
+
+        function renderPersonalCard(targetAngler) {
+            const container = document.getElementById('personalResultCardContainer');
+
+            if (!targetAngler) {
+                container.innerHTML = `
+                    <div class="glass-card-sm p-6 text-center text-pixelMuted font-bold text-sm">
+                        Type your name in the search box above to isolate your Day 1 & Day 2 pegs and teammates.
+                    </div>
+                `;
+                return;
+            }
+
+            const d1Alloc = viewerData.draw.day1.find(d => d.anglerId === targetAngler.id);
+            const d2Alloc = viewerData.duration === 2 ? viewerData.draw.day2.find(d => d.anglerId === targetAngler.id) : null;
+            const team = viewerData.teams.find(t => t.id === targetAngler.teamId);
+
+            const teammates = target
