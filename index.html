@@ -99,12 +99,6 @@
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(168, 199, 250, 0.5); border-radius: 9999px; }
-
-        .scroll-contain {
-            overscroll-behavior: contain;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
@@ -184,8 +178,8 @@
                     </div>
                 </div>
 
-                <!-- 4-ZONE CARD GRID -->
-                <div id="fullBeachZoneGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                <!-- 4-ZONE CARD GRID (NATURAL HEIGHT, NO NESTED SCROLLING) -->
+                <div id="fullBeachZoneGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start"></div>
             </div>
 
         </div>
@@ -379,8 +373,8 @@
                                     <div class="zone-badge-${d2Zone} rounded-xl py-2.5 px-3 shadow-lg">
                                         <span class="block text-[11px] font-black uppercase tracking-wider font-heading">${d2Zone} Zone</span>
                                         <span class="text-2xl sm:text-4xl font-black font-mono-tabular">Peg ${d2Peg}</span>
-                                </div>
-                            ` : '<span class="text-pixelMuted italic text-xs">Unassigned</span>'}
+                                    </div>
+                                ` : '<span class="text-pixelMuted italic text-xs">Unassigned</span>'}
                             </div>
                         ` : ''}
                     </div>
@@ -451,11 +445,11 @@
 
                 return `
                     <div class="glass-card-sm p-3.5 space-y-2.5 zone-card-${color}">
-                        <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                        <div class="flex items-center justify-between pb-2 border-b border-white/20 sticky top-[60px] bg-slate-900/95 backdrop-blur-md pt-1 z-10 rounded-t-lg">
                             <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} Zone</span>
                             <span class="text-[11px] font-mono-tabular font-black glass-pill px-2.5 py-0.5 border border-white/30 text-white">${zonePegs.length} Pegs</span>
                         </div>
-                        <div class="space-y-1.5 max-h-80 overflow-y-auto custom-scrollbar scroll-contain pr-1">${pegRowsHTML || '<span class="text-pixelMuted italic text-xs">No allocations</span>'}</div>
+                        <div class="space-y-1.5">${pegRowsHTML || '<span class="text-pixelMuted italic text-xs">No allocations</span>'}</div>
                     </div>
                 `;
             }).join('');
