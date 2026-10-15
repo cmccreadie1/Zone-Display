@@ -190,18 +190,23 @@
 
         const ZONE_COLORS = ['Red', 'Yellow', 'Green', 'Blue'];
 
-        window.onload = function() {
+        window.addEventListener('DOMContentLoaded', () => {
             loadLiveDrawJSON();
-        };
+        });
 
         function loadLiveDrawJSON() {
-            // Fetch live_draw.json directly from the repository root
-            fetch('live_draw.json?v=' + new Date().getTime())
+            const timestamp = new Date().getTime();
+            
+            fetch('live_draw.json?v=' + timestamp)
                 .then(response => {
-                    if (!response.ok) throw new Error("live_draw.json not found");
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     return response.json();
                 })
                 .then(data => {
+                    console.log("Successfully loaded live_draw.json:", data);
+                    
                     if (data && data.anglers && data.draw) {
                         viewerData = data;
                         renderHeaderDetails();
@@ -210,11 +215,12 @@
                         renderPersonalCard(null);
                         renderFullBeachMatrix();
                     } else {
+                        console.error("Data missing required keys (anglers or draw):", data);
                         showNoDataWarning();
                     }
                 })
                 .catch(err => {
-                    console.warn("Could not load live_draw.json", err);
+                    console.error("Failed to fetch live_draw.json:", err);
                     showNoDataWarning();
                 });
         }
@@ -225,12 +231,14 @@
         }
 
         function renderHeaderDetails() {
-            document.getElementById('headerCompTitle').innerText = viewerData.title || "Shore Competition";
-            document.getElementById('headerDurationBadge').innerText = viewerData.duration === 2 ? '2-Day Competition' : '1-Day Competition';
+            document.getElementById('headerCompTitle').innerText = viewerData.title || viewerData.t || "Shore Competition";
+            
+            const matchDuration = viewerData.duration || viewerData.d || 1;
+            document.getElementById('headerDurationBadge').innerText = matchDuration === 2 ? '2-Day Competition' : '1-Day Competition';
             document.getElementById('headerTotalAnglersBadge').innerText = `${viewerData.anglers.length} Anglers`;
 
             const dayToggleGroup = document.getElementById('beachDayToggleGroup');
-            if (viewerData.duration === 2) dayToggleGroup.classList.remove('hidden');
+            if (matchDuration === 2) dayToggleGroup.classList.remove('hidden');
             else dayToggleGroup.classList.add('hidden');
         }
 
@@ -262,8 +270,157 @@
                 return;
             }
 
-            const d1Alloc = viewerData.draw.day1.find(d => d.anglerId === targetAngler.id);
-            const d2Alloc = viewerData.duration === 2 ? viewerData.draw.day2.find(d => d.anglerId === targetAngler.id) : null;
+            const matchDuration = viewerData.duration || viewerData.d || 1;
+            const d1Alloc = viewerData.draw.day1.find(d => (d.anglerId || d.aId) === targetAngler.id);
+            const d2Alloc = matchDuration === 2 ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === targetAngler.id) : null;
             const team = viewerData.teams.find(t => t.id === targetAngler.teamId);
 
-            const teammates = target
+            const teammates = targetAngler.teamId 
+                ? viewerData.anglers.filter(a => a.teamId === targetAngler.teamId && a.id !== targetAngler.id)
+                : [];
+
+            let teammateRowsHTML = '';
+            if (teammates.length > 0) {
+                teammateRowsHTML = teammates.map(m => {
+                    const mD1 = viewerData.draw.day1.find(d => (d.anglerId || d.aId) === m.id);
+                    const mD2 = matchDuration === 2 ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === m.id) : null;
+
+                    const mD1Zone = mD1 ? (mD1.zone || mD1.z) : '';
+                    const mD1Peg = mD1 ? (mD1.peg || mD1.p) : '';
+                    const mD2Zone = mD2 ? (mD2.zone || mD2.z) : '';
+                    const mD2Peg = mD2 ? (mD2.peg || mD2.p) : '';
+
+                    return `
+                        <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-slate-900/80 border border-white/15 text-xs font-bold">
+                            <span class="text-pixelText font-heading text-sm uppercase truncate">${(m.name || 'Unnamed').toUpperCase()}</span>
+                            <div class="flex items-center gap-2 font-mono-tabular shrink-0">
+                                ${mD1 ? `<span class="zone-badge-${mD1Zone} px-2.5 py-0.5 rounded-md font-black">D1: ${mD1Zone} Peg${mD1Peg}</span>` : ''}
+                                ${mD2 ? `<span class="zone-badge-${mD2Zone} px-2.5 py-0.5 rounded-md font-black">D2: ${mD2Zone} Peg${mD2Peg}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const d1Zone = d1Alloc ? (d1Alloc.zone || d1Alloc.z) : '';
+            const d1Peg = d1Alloc ? (d1Alloc.peg || d1Alloc.p) : '';
+            const d2Zone = d2Alloc ? (d2Alloc.zone || d2Alloc.z) : '';
+            const d2Peg = d2Alloc ? (d2Alloc.peg || d2Alloc.p) : '';
+            const isMobility = targetAngler.mobility || targetAngler.mob;
+
+            container.innerHTML = `
+                <div class="glass-card-sm p-6 space-y-6 border-2 border-pixelBlue/60 bg-pixelBlue/10">
+                    <div class="flex items-center justify-between border-b border-white/20 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-2xl sm:text-3xl font-black font-heading text-pixelText uppercase tracking-wider">${(targetAngler.name || 'Unnamed').toUpperCase()}</h3>
+                                ${isMobility ? '<span class="bg-pixelGold text-slate-950 font-black text-xs px-2 py-0.5 rounded-md font-sans">[A] MOBILITY</span>' : ''}
+                            </div>
+                            <span class="text-xs font-black text-pixelCyan uppercase tracking-wider font-heading">${team ? team.name.toUpperCase() : 'INDIVIDUAL COMPETITOR'}</span>
+                        </div>
+                        <span class="text-xs font-black glass-pill px-3 py-1 border border-pixelBlue/40 text-pixelBlue font-heading uppercase">Personal Match Card</span>
+                    </div>
+
+                    <!-- DAY 1 & DAY 2 ALLOCATION TILES -->
+                    <div class="grid grid-cols-1 ${matchDuration === 2 ? 'sm:grid-cols-2' : ''} gap-4">
+                        <div class="glass-card-sm p-4 space-y-2 border border-white/20 text-center">
+                            <span class="text-xs font-black text-pixelMuted uppercase tracking-wider font-heading block">Day 1 Placement</span>
+                            ${d1Alloc ? `
+                                <div class="zone-badge-${d1Zone} rounded-2xl py-3 px-4 shadow-lg">
+                                    <span class="block text-xs font-black uppercase tracking-wider font-heading">${d1Zone} Zone</span>
+                                    <span class="text-3xl sm:text-4xl font-black font-mono-tabular">Peg ${d1Peg}</span>
+                                </div>
+                            ` : '<span class="text-pixelMuted italic text-xs">Unassigned</span>'}
+                        </div>
+
+                        ${matchDuration === 2 ? `
+                            <div class="glass-card-sm p-4 space-y-2 border border-white/20 text-center">
+                                <span class="text-xs font-black text-pixelMuted uppercase tracking-wider font-heading block">Day 2 Placement</span>
+                                ${d2Alloc ? `
+                                    <div class="zone-badge-${d2Zone} rounded-2xl py-3 px-4 shadow-lg">
+                                        <span class="block text-xs font-black uppercase tracking-wider font-heading">${d2Zone} Zone</span>
+                                        <span class="text-3xl sm:text-4xl font-black font-mono-tabular">Peg ${d2Peg}</span>
+                                    </div>
+                                ` : '<span class="text-pixelMuted italic text-xs">Unassigned</span>'}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- TEAMMATES PANEL -->
+                    ${teammates.length > 0 ? `
+                        <div class="pt-2 border-t border-white/20 space-y-3">
+                            <span class="text-xs font-black text-pixelMuted uppercase tracking-wider font-heading block flex items-center gap-2">
+                                <i class="fa-solid fa-users text-pixelBlue"></i> Team Members (${team ? team.name.toUpperCase() : ''}):
+                            </span>
+                            <div class="space-y-2">${teammateRowsHTML}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function setBeachViewDay(day) {
+            activeBeachDay = day;
+            const btn1 = document.getElementById('beachDayBtn1');
+            const btn2 = document.getElementById('beachDayBtn2');
+
+            if (day === 1) {
+                btn1.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
+                btn2.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+            } else {
+                btn1.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn2.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
+            }
+
+            renderFullBeachMatrix();
+        }
+
+        function renderFullBeachMatrix() {
+            const container = document.getElementById('fullBeachZoneGrid');
+            if (!viewerData || !viewerData.draw) return;
+
+            const drawList = activeBeachDay === 1 ? viewerData.draw.day1 : viewerData.draw.day2;
+
+            container.innerHTML = ZONE_COLORS.map(color => {
+                const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
+
+                zonePegs.sort((a,b) => {
+                    let numA = parseInt(a.peg || a.p) || 0;
+                    let numB = parseInt(b.peg || b.p) || 0;
+                    return numA - numB;
+                });
+
+                const pegRowsHTML = zonePegs.map(d => {
+                    const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
+                    const team = angler ? viewerData.teams.find(t => t.id === angler.teamId) : null;
+
+                    const pegNumber = d.peg || d.p;
+                    const isMobility = angler && (angler.mobility || angler.mob);
+
+                    return `
+                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-900/70 border border-white/10 text-xs font-bold">
+                            <span class="bg-slate-900/90 text-pixelText border border-white/20 font-mono-tabular font-black px-2.5 py-1 rounded-md shrink-0">
+                                ${pegNumber} ${isMobility ? '<span class="text-pixelGold font-black ml-0.5">[A]</span>' : ''}
+                            </span>
+                            <div class="text-right min-w-0 flex-grow ml-3">
+                                <span class="block font-black uppercase tracking-wider text-pixelText font-heading truncate text-xs sm:text-sm">${(angler && angler.name ? angler.name : 'Unnamed').toUpperCase()}</span>
+                                <span class="block text-[10px] font-bold text-pixelMuted uppercase tracking-wider truncate">${team ? team.name.toUpperCase() : 'INDIVIDUAL'}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="glass-card-sm p-4 space-y-3 zone-card-${color}">
+                        <div class="flex items-center justify-between pb-2 border-b border-white/20">
+                            <span class="font-heading uppercase tracking-wider font-black text-base text-white drop-shadow">${color} Zone</span>
+                            <span class="text-xs font-mono-tabular font-black glass-pill px-3 py-0.5 border border-white/30 text-white">${zonePegs.length} Pegs</span>
+                        </div>
+                        <div class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar pr-1">${pegRowsHTML || '<span class="text-pixelMuted italic text-xs">No allocations</span>'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
