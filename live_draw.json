@@ -1,0 +1,490 @@
+{
+  "title": "Shore Fishing Match",
+  "duration": 2,
+  "teams": [
+    {
+      "id": "team_1",
+      "name": "trees"
+    },
+    {
+      "id": "team_2",
+      "name": "rivers"
+    },
+    {
+      "id": "team_3",
+      "name": "european countries"
+    },
+    {
+      "id": "team_4",
+      "name": "us cities"
+    },
+    {
+      "id": "team_5",
+      "name": "us states"
+    },
+    {
+      "id": "team_6",
+      "name": "dogs"
+    },
+    {
+      "id": "team_7",
+      "name": "car makers"
+    }
+  ],
+  "anglers": [
+    {
+      "id": "ang_1_1",
+      "name": "oak",
+      "teamId": "team_1",
+      "mobility": true
+    },
+    {
+      "id": "ang_1_2",
+      "name": "pine",
+      "teamId": "team_1",
+      "mobility": false
+    },
+    {
+      "id": "ang_1_3",
+      "name": "sicamore",
+      "teamId": "team_1",
+      "mobility": false
+    },
+    {
+      "id": "ang_1_4",
+      "name": "spruce",
+      "teamId": "team_1",
+      "mobility": false
+    },
+    {
+      "id": "ang_2_1",
+      "name": "clyde",
+      "teamId": "team_2",
+      "mobility": true
+    },
+    {
+      "id": "ang_2_2",
+      "name": "forth",
+      "teamId": "team_2",
+      "mobility": false
+    },
+    {
+      "id": "ang_2_3",
+      "name": "tay",
+      "teamId": "team_2",
+      "mobility": false
+    },
+    {
+      "id": "ang_2_4",
+      "name": "leven",
+      "teamId": "team_2",
+      "mobility": false
+    },
+    {
+      "id": "ang_3_1",
+      "name": "spain",
+      "teamId": "team_3",
+      "mobility": true
+    },
+    {
+      "id": "ang_3_2",
+      "name": "france",
+      "teamId": "team_3",
+      "mobility": false
+    },
+    {
+      "id": "ang_3_3",
+      "name": "germany",
+      "teamId": "team_3",
+      "mobility": false
+    },
+    {
+      "id": "ang_3_4",
+      "name": "poland",
+      "teamId": "team_3",
+      "mobility": false
+    },
+    {
+      "id": "ang_4_1",
+      "name": "new york",
+      "teamId": "team_4",
+      "mobility": true
+    },
+    {
+      "id": "ang_4_2",
+      "name": "chicago",
+      "teamId": "team_4",
+      "mobility": false
+    },
+    {
+      "id": "ang_4_3",
+      "name": "maimi",
+      "teamId": "team_4",
+      "mobility": false
+    },
+    {
+      "id": "ang_4_4",
+      "name": "los  angeles",
+      "teamId": "team_4",
+      "mobility": false
+    },
+    {
+      "id": "ang_5_1",
+      "name": "florida",
+      "teamId": "team_5",
+      "mobility": false
+    },
+    {
+      "id": "ang_5_2",
+      "name": "california",
+      "teamId": "team_5",
+      "mobility": false
+    },
+    {
+      "id": "ang_5_3",
+      "name": "arizona",
+      "teamId": "team_5",
+      "mobility": false
+    },
+    {
+      "id": "ang_5_4",
+      "name": "new mexico",
+      "teamId": "team_5",
+      "mobility": false
+    },
+    {
+      "id": "ang_6_1",
+      "name": "collie",
+      "teamId": "team_6",
+      "mobility": false
+    },
+    {
+      "id": "ang_6_2",
+      "name": "boxer",
+      "teamId": "team_6",
+      "mobility": false
+    },
+    {
+      "id": "ang_6_3",
+      "name": "cairn",
+      "teamId": "team_6",
+      "mobility": false
+    },
+    {
+      "id": "ang_6_4",
+      "name": "westie",
+      "teamId": "team_6",
+      "mobility": false
+    },
+    {
+      "id": "ang_7_1",
+      "name": "bmw",
+      "teamId": "team_7",
+      "mobility": false
+    },
+    {
+      "id": "ang_7_2",
+      "name": "mercedes",
+      "teamId": "team_7",
+      "mobility": false
+    },
+    {
+      "id": "ang_7_3",
+      "name": "kia",
+      "teamId": "team_7",
+      "mobility": false
+    },
+    {
+      "id": "ang_7_4",
+      "name": "ford",
+      "teamId": "team_7",
+      "mobility": false
+    }
+  ],
+  "draw": {
+    "day1": [
+      {
+        "anglerId": "ang_2_1",
+        "zone": "Green",
+        "peg": "17"
+      },
+      {
+        "anglerId": "ang_2_2",
+        "zone": "Blue",
+        "peg": "27"
+      },
+      {
+        "anglerId": "ang_2_3",
+        "zone": "Red",
+        "peg": "4"
+      },
+      {
+        "anglerId": "ang_2_4",
+        "zone": "Yellow",
+        "peg": "13"
+      },
+      {
+        "anglerId": "ang_1_1",
+        "zone": "Green",
+        "peg": "16"
+      },
+      {
+        "anglerId": "ang_1_2",
+        "zone": "Yellow",
+        "peg": "8"
+      },
+      {
+        "anglerId": "ang_1_3",
+        "zone": "Red",
+        "peg": "5"
+      },
+      {
+        "anglerId": "ang_1_4",
+        "zone": "Blue",
+        "peg": "28"
+      },
+      {
+        "anglerId": "ang_3_1",
+        "zone": "Red",
+        "peg": "2"
+      },
+      {
+        "anglerId": "ang_3_2",
+        "zone": "Yellow",
+        "peg": "12"
+      },
+      {
+        "anglerId": "ang_3_3",
+        "zone": "Green",
+        "peg": "15"
+      },
+      {
+        "anglerId": "ang_3_4",
+        "zone": "Blue",
+        "peg": "25"
+      },
+      {
+        "anglerId": "ang_4_1",
+        "zone": "Green",
+        "peg": "18"
+      },
+      {
+        "anglerId": "ang_4_2",
+        "zone": "Red",
+        "peg": "1"
+      },
+      {
+        "anglerId": "ang_4_3",
+        "zone": "Yellow",
+        "peg": "9"
+      },
+      {
+        "anglerId": "ang_4_4",
+        "zone": "Blue",
+        "peg": "23"
+      },
+      {
+        "anglerId": "ang_5_1",
+        "zone": "Red",
+        "peg": "6"
+      },
+      {
+        "anglerId": "ang_5_2",
+        "zone": "Blue",
+        "peg": "26"
+      },
+      {
+        "anglerId": "ang_5_3",
+        "zone": "Yellow",
+        "peg": "14"
+      },
+      {
+        "anglerId": "ang_5_4",
+        "zone": "Green",
+        "peg": "19"
+      },
+      {
+        "anglerId": "ang_6_1",
+        "zone": "Yellow",
+        "peg": "11"
+      },
+      {
+        "anglerId": "ang_6_2",
+        "zone": "Red",
+        "peg": "7"
+      },
+      {
+        "anglerId": "ang_6_3",
+        "zone": "Green",
+        "peg": "20"
+      },
+      {
+        "anglerId": "ang_6_4",
+        "zone": "Blue",
+        "peg": "24"
+      },
+      {
+        "anglerId": "ang_7_1",
+        "zone": "Blue",
+        "peg": "22"
+      },
+      {
+        "anglerId": "ang_7_2",
+        "zone": "Green",
+        "peg": "21"
+      },
+      {
+        "anglerId": "ang_7_3",
+        "zone": "Red",
+        "peg": "3"
+      },
+      {
+        "anglerId": "ang_7_4",
+        "zone": "Yellow",
+        "peg": "10"
+      }
+    ],
+    "day2": [
+      {
+        "anglerId": "ang_2_1",
+        "zone": "Blue",
+        "peg": "24"
+      },
+      {
+        "anglerId": "ang_2_2",
+        "zone": "Yellow",
+        "peg": "12"
+      },
+      {
+        "anglerId": "ang_2_3",
+        "zone": "Green",
+        "peg": "15"
+      },
+      {
+        "anglerId": "ang_2_4",
+        "zone": "Red",
+        "peg": "5"
+      },
+      {
+        "anglerId": "ang_1_1",
+        "zone": "Yellow",
+        "peg": "9"
+      },
+      {
+        "anglerId": "ang_1_2",
+        "zone": "Blue",
+        "peg": "28"
+      },
+      {
+        "anglerId": "ang_1_3",
+        "zone": "Green",
+        "peg": "18"
+      },
+      {
+        "anglerId": "ang_1_4",
+        "zone": "Red",
+        "peg": "1"
+      },
+      {
+        "anglerId": "ang_3_1",
+        "zone": "Blue",
+        "peg": "23"
+      },
+      {
+        "anglerId": "ang_3_2",
+        "zone": "Red",
+        "peg": "2"
+      },
+      {
+        "anglerId": "ang_3_3",
+        "zone": "Yellow",
+        "peg": "13"
+      },
+      {
+        "anglerId": "ang_3_4",
+        "zone": "Green",
+        "peg": "21"
+      },
+      {
+        "anglerId": "ang_4_1",
+        "zone": "Red",
+        "peg": "7"
+      },
+      {
+        "anglerId": "ang_4_2",
+        "zone": "Green",
+        "peg": "20"
+      },
+      {
+        "anglerId": "ang_4_3",
+        "zone": "Blue",
+        "peg": "26"
+      },
+      {
+        "anglerId": "ang_4_4",
+        "zone": "Yellow",
+        "peg": "14"
+      },
+      {
+        "anglerId": "ang_5_1",
+        "zone": "Green",
+        "peg": "17"
+      },
+      {
+        "anglerId": "ang_5_2",
+        "zone": "Yellow",
+        "peg": "8"
+      },
+      {
+        "anglerId": "ang_5_3",
+        "zone": "Blue",
+        "peg": "22"
+      },
+      {
+        "anglerId": "ang_5_4",
+        "zone": "Red",
+        "peg": "3"
+      },
+      {
+        "anglerId": "ang_6_1",
+        "zone": "Blue",
+        "peg": "25"
+      },
+      {
+        "anglerId": "ang_6_2",
+        "zone": "Green",
+        "peg": "19"
+      },
+      {
+        "anglerId": "ang_6_3",
+        "zone": "Red",
+        "peg": "6"
+      },
+      {
+        "anglerId": "ang_6_4",
+        "zone": "Yellow",
+        "peg": "10"
+      },
+      {
+        "anglerId": "ang_7_1",
+        "zone": "Yellow",
+        "peg": "11"
+      },
+      {
+        "anglerId": "ang_7_2",
+        "zone": "Red",
+        "peg": "4"
+      },
+      {
+        "anglerId": "ang_7_3",
+        "zone": "Green",
+        "peg": "16"
+      },
+      {
+        "anglerId": "ang_7_4",
+        "zone": "Blue",
+        "peg": "27"
+      }
+    ]
+  }
+}
