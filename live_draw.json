@@ -226,7 +226,7 @@
       {
         "anglerId": "ang_1_1",
         "zone": "Green",
-        "peg": "16"
+        "peg": "15"
       },
       {
         "anglerId": "ang_1_2",
@@ -256,7 +256,7 @@
       {
         "anglerId": "ang_3_3",
         "zone": "Green",
-        "peg": "15"
+        "peg": "18"
       },
       {
         "anglerId": "ang_3_4",
@@ -266,7 +266,7 @@
       {
         "anglerId": "ang_4_1",
         "zone": "Green",
-        "peg": "18"
+        "peg": "16"
       },
       {
         "anglerId": "ang_4_2",
@@ -368,7 +368,7 @@
       {
         "anglerId": "ang_1_1",
         "zone": "Yellow",
-        "peg": "9"
+        "peg": "8"
       },
       {
         "anglerId": "ang_1_2",
@@ -433,7 +433,7 @@
       {
         "anglerId": "ang_5_2",
         "zone": "Yellow",
-        "peg": "8"
+        "peg": "9"
       },
       {
         "anglerId": "ang_5_3",
