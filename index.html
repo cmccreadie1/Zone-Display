@@ -43,6 +43,12 @@
             background: radial-gradient(circle at 50% 0%, #1e3a8a 0%, #1e293b 65%, #0f172a 100%) fixed;
             color: #ffffff;
             min-height: 100vh;
+            transition: background 0.4s ease;
+        }
+
+        /* DISTINCT DAY 2 BACKGROUND GRADIENT ACCENT */
+        body.day2-active {
+            background: radial-gradient(circle at 50% 0%, #78350f 0%, #1e293b 65%, #0f172a 100%) fixed;
         }
 
         h1, h2, h3, h4, .font-heading {
@@ -63,6 +69,12 @@
             border: 1.5px solid rgba(255, 255, 255, 0.22);
             box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 25px 50px -12px rgba(0, 0, 0, 0.6);
             border-radius: 24px;
+            transition: border-color 0.4s ease, background 0.4s ease;
+        }
+
+        body.day2-active .glass-card-day-matrix {
+            background: rgba(45, 26, 14, 0.8) !important;
+            border-color: rgba(253, 224, 71, 0.35) !important;
         }
 
         .glass-card-sm {
@@ -100,25 +112,9 @@
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(168, 199, 250, 0.5); border-radius: 9999px; }
-
-        /* PRINT STYLES FOR FULL BEACH DRAW PRINTING */
-        @media print {
-            body { background: #ffffff !important; color: #000000 !important; }
-            header, #noDataPanel, .no-print { display: none !important; }
-            .glass-card, .glass-card-sm {
-                background: #ffffff !important;
-                color: #000000 !important;
-                border: 1px solid #ccc !important;
-                box-shadow: none !important;
-                backdrop-filter: none !important;
-            }
-            .text-pixelText, .text-pixelMuted, .text-pixelBlue { color: #000000 !important; }
-            #fullBeachZoneGrid { grid-template-cols: repeat(4, minmax(0, 1fr)) !important; gap: 8px !important; }
-            .zone-card-Red, .zone-card-Yellow, .zone-card-Green, .zone-card-Blue { background: #f8fafc !important; border: 1px solid #000000 !important; }
-        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
+<body id="appBody" class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
 
     <!-- HEADER BAR -->
     <header class="bg-slate-950/85 backdrop-blur-2xl border-b border-white/20 sticky top-0 z-40 shadow-2xl">
@@ -165,33 +161,19 @@
                 </div>
             </div>
 
-            <!-- SECTION 1: PERSONAL ANGLER & PEG LOOKUP -->
+            <!-- SECTION 1: PERSONAL ANGLER LOOKUP (TOP DASHBOARD) -->
             <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <!-- ANGLER SEARCH INPUT (2 COLUMNS) -->
-                    <div class="md:col-span-2 space-y-2 relative">
-                        <label class="block text-xs font-black uppercase tracking-wider text-pixelBlue font-heading flex items-center gap-1.5">
-                            <i class="fa-solid fa-magnifying-glass"></i> Find My Draw & Teammates
-                        </label>
-                        <div class="relative">
-                            <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name...">
-                            <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
-                        </div>
-
-                        <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
-                        <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-40 sm:max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
+                <div class="space-y-2 relative">
+                    <label class="block text-xs font-black uppercase tracking-wider text-pixelBlue font-heading flex items-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass"></i> Find My Draw & Teammates
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name...">
+                        <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
-                    <!-- PEG NUMBER QUICK LOOKUP (1 COLUMN) -->
-                    <div class="space-y-2">
-                        <label class="block text-xs font-black uppercase tracking-wider text-pixelGold font-heading flex items-center gap-1.5">
-                            <i class="fa-solid fa-location-dot"></i> Quick Peg Finder
-                        </label>
-                        <div class="relative">
-                            <input type="number" id="pegSearchInput" onkeyup="handlePegSearch()" autocomplete="off" inputmode="numeric" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelGold font-mono-tabular" placeholder="Peg #">
-                            <button onclick="clearPegSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
-                        </div>
-                    </div>
+                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
+                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-40 sm:max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
                 </div>
 
                 <!-- PERSONAL RESULT CARD CONTAINER -->
@@ -199,30 +181,26 @@
             </div>
 
             <!-- SECTION 2: FULL VENUE BEACH MATRIX -->
-            <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
+            <div id="beachMatrixCard" class="glass-card glass-card-day-matrix p-4 sm:p-8 space-y-4 sm:space-y-6">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/20 pb-4">
                     <div>
-                        <h3 class="text-lg sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
-                        </h3>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2 uppercase tracking-wider">
+                                <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
+                            </h3>
+                            <span id="beachDayHeaderBadge" class="bg-pixelBlue text-slate-950 text-[10px] font-black px-2 py-0.5 rounded font-heading uppercase">Day 1</span>
+                        </div>
                         <p class="text-xs text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
                     </div>
 
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <!-- PRINT / SAVE DRAW BUTTON -->
-                        <button onclick="window.print()" class="no-print px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider glass-pill text-pixelBlue border border-pixelBlue/40 hover:bg-pixelBlue/20 transition-all touch-elastic flex items-center gap-1.5">
-                            <i class="fa-solid fa-print"></i> Print / Save Draw
+                    <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
+                    <div id="beachDayToggleGroup" class="flex items-center gap-2 w-full sm:w-auto hidden">
+                        <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
+                            Day 1
                         </button>
-
-                        <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
-                        <div id="beachDayToggleGroup" class="flex items-center gap-2 hidden">
-                            <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
-                                Day 1
-                            </button>
-                            <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
-                                Day 2
-                            </button>
-                        </div>
+                        <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
+                            Day 2
+                        </button>
                     </div>
                 </div>
 
@@ -234,12 +212,32 @@
 
     </main>
 
+    <!-- "WHO'S BESIDE ME?" NEIGHBOR POPUP MODAL -->
+    <div id="besideMeModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-card max-w-lg w-full p-5 sm:p-7 space-y-5 border-2 border-pixelBlue/80 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/20 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-users-between-lines text-pixelBlue text-xl"></i>
+                    <h3 class="text-xl font-black font-heading text-pixelText uppercase tracking-wider">Who's Beside Me?</h3>
+                </div>
+                <button onclick="closeBesideMeModal()" class="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-xl">&times;</button>
+            </div>
+
+            <div id="besideMeModalContent" class="space-y-4">
+                <!-- Neighbor rows populate dynamically here -->
+            </div>
+
+            <button onclick="closeBesideMeModal()" class="w-full py-3 rounded-xl bg-pixelBlue text-slate-950 font-black font-heading uppercase tracking-wider text-sm shadow-lg hover:bg-pixelBlue/90 transition-all touch-elastic">
+                Close
+            </button>
+        </div>
+    </div>
+
     <!-- VIEWER ENGINE SCRIPT -->
     <script>
         let viewerData = null;
         let activeBeachDay = 1;
         let selectedAnglerId = null;
-        let highlightedPegNumber = null;
 
         const ZONE_COLORS = ['Red', 'Yellow', 'Green', 'Blue'];
 
@@ -398,27 +396,6 @@
             }
         }
 
-        function handlePegSearch() {
-            const pegVal = parseInt(document.getElementById('pegSearchInput').value);
-            highlightedPegNumber = !isNaN(pegVal) ? pegVal : null;
-            renderFullBeachMatrix();
-
-            if (highlightedPegNumber !== null) {
-                setTimeout(() => {
-                    const targetPegEl = document.getElementById(`peg-row-${highlightedPegNumber}`);
-                    if (targetPegEl) {
-                        targetPegEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }, 100);
-            }
-        }
-
-        function clearPegSearchInput() {
-            document.getElementById('pegSearchInput').value = '';
-            highlightedPegNumber = null;
-            renderFullBeachMatrix();
-        }
-
         function selectAnglerFromDropdown(anglerId) {
             const targetAngler = viewerData.anglers.find(a => a.id === anglerId);
             if (targetAngler) {
@@ -514,11 +491,11 @@
                             </div>
                             <span class="text-xs font-black text-pixelCyan uppercase tracking-wider font-heading">${team ? team.name.toUpperCase() : 'INDIVIDUAL COMPETITOR'}</span>
                         </div>
-                        <div class="flex items-center gap-2 self-start sm:self-auto">
-                            <button onclick="shareAnglerDraw('${targetAngler.id}')" class="no-print text-xs font-black glass-pill px-3 py-1.5 border border-pixelBlue/40 text-pixelBlue hover:bg-pixelBlue/20 font-heading uppercase flex items-center gap-1.5 transition-all touch-elastic">
-                                <i class="fa-solid fa-share-nodes"></i> Share Draw
-                            </button>
-                        </div>
+
+                        <!-- WHO'S BESIDE ME BUTTON -->
+                        <button onclick="openBesideMeModal('${targetAngler.id}')" class="px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider bg-pixelGold text-slate-950 shadow-md border border-pixelGold/60 hover:bg-pixelGold/90 transition-all touch-elastic flex items-center gap-1.5 self-start sm:self-auto">
+                            <i class="fa-solid fa-users-between-lines"></i> Who's Beside Me?
+                        </button>
                     </div>
 
                     <!-- DAY 1 & DAY 2 ALLOCATION TILES -->
@@ -559,37 +536,62 @@
             `;
         }
 
-        function shareAnglerDraw(anglerId) {
+        /* "WHO'S BESIDE ME?" MODAL LOGIC */
+        function openBesideMeModal(anglerId) {
             const angler = viewerData.anglers.find(a => a.id === anglerId);
             if (!angler) return;
 
             const matchDuration = viewerData.duration || viewerData.d || 1;
-            const d1 = viewerData.draw.day1 ? viewerData.draw.day1.find(d => (d.anglerId || d.aId) === anglerId) : null;
-            const d2 = (matchDuration === 2 && viewerData.draw.day2) ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === anglerId) : null;
+            const modalContent = document.getElementById('besideMeModalContent');
 
-            let summaryText = `${angler.name} — `;
-            if (d1) summaryText += `Day 1: ${d1.zone || d1.z} Zone Peg ${d1.peg || d1.p}`;
-            if (d2) summaryText += ` | Day 2: ${d2.zone || d2.z} Zone Peg ${d2.peg || d2.p}`;
+            let html = '';
 
-            const shareUrl = window.location.origin + window.location.pathname + '?angler=' + encodeURIComponent(angler.name);
+            // Helper to find neighbors in a day's draw
+            const getNeighborsForDay = (drawList, dayLabel) => {
+                const userAlloc = drawList ? drawList.find(d => (d.anglerId || d.aId) === anglerId) : null;
+                if (!userAlloc) return `<div class="glass-card-sm p-3 text-xs text-pixelMuted italic text-center">${dayLabel}: No placement found</div>`;
 
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Shorescore Draw Allocation',
-                    text: summaryText,
-                    url: shareUrl
-                }).catch(() => copyToClipboard(summaryText + ' ' + shareUrl));
-            } else {
-                copyToClipboard(summaryText + ' ' + shareUrl);
+                const zone = userAlloc.zone || userAlloc.z;
+                const pegNum = parseInt(userAlloc.peg || userAlloc.p) || 0;
+
+                const zonePegs = drawList.filter(d => (d.zone || d.z) === zone);
+                
+                const leftAlloc = zonePegs.find(d => (parseInt(d.peg || d.p) || 0) === pegNum - 1);
+                const rightAlloc = zonePegs.find(d => (parseInt(d.peg || d.p) || 0) === pegNum + 1);
+
+                const leftAngler = leftAlloc ? viewerData.anglers.find(a => a.id === (leftAlloc.anglerId || leftAlloc.aId)) : null;
+                const rightAngler = rightAlloc ? viewerData.anglers.find(a => a.id === (rightAlloc.anglerId || rightAlloc.aId)) : null;
+
+                return `
+                    <div class="glass-card-sm p-4 space-y-3 border border-white/20">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                            <span class="font-heading font-black text-sm uppercase text-pixelGold">${dayLabel} — ${zone} Zone (Your Peg: ${pegNum})</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-white/10 space-y-1">
+                                <span class="text-[10px] font-black text-pixelMuted uppercase block">Left (Peg ${pegNum - 1})</span>
+                                <span class="font-black text-pixelText uppercase font-heading text-sm block truncate">${leftAngler ? leftAngler.name : 'End of Zone'}</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-white/10 space-y-1 text-right">
+                                <span class="text-[10px] font-black text-pixelMuted uppercase block">Right (Peg ${pegNum + 1})</span>
+                                <span class="font-black text-pixelText uppercase font-heading text-sm block truncate">${rightAngler ? rightAngler.name : 'End of Zone'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            html += getNeighborsForDay(viewerData.draw.day1, 'Day 1');
+            if (matchDuration === 2) {
+                html += getNeighborsForDay(viewerData.draw.day2, 'Day 2');
             }
+
+            modalContent.innerHTML = html;
+            document.getElementById('besideMeModal').classList.remove('hidden');
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Draw summary and link copied to clipboard!');
-            }).catch(() => {
-                alert(text);
-            });
+        function closeBesideMeModal() {
+            document.getElementById('besideMeModal').classList.add('hidden');
         }
 
         function updateURLParameter(name) {
@@ -615,13 +617,21 @@
             activeBeachDay = day;
             const btn1 = document.getElementById('beachDayBtn1');
             const btn2 = document.getElementById('beachDayBtn2');
+            const body = document.getElementById('appBody');
+            const dayBadge = document.getElementById('beachDayHeaderBadge');
 
             if (day === 1) {
-                btn1.className = "px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
-                btn2.className = "px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn1.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
+                btn2.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                body.classList.remove('day2-active');
+                dayBadge.className = "bg-pixelBlue text-slate-950 text-[10px] font-black px-2 py-0.5 rounded font-heading uppercase";
+                dayBadge.innerText = "Day 1";
             } else {
-                btn1.className = "px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
-                btn2.className = "px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
+                btn1.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn2.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
+                body.classList.add('day2-active');
+                dayBadge.className = "bg-pixelGold text-slate-950 text-[10px] font-black px-2 py-0.5 rounded font-heading uppercase";
+                dayBadge.innerText = "Day 2";
             }
 
             renderMatchOverviewStats();
@@ -654,19 +664,16 @@
                     // Check if row is selected angler or teammate
                     const isSelf = selectedAngler && angler && angler.id === selectedAngler.id;
                     const isTeammate = selectedAngler && angler && selectedAngler.teamId && angler.teamId === selectedAngler.teamId && !isSelf;
-                    const isPegMatch = highlightedPegNumber !== null && pegNumber === highlightedPegNumber;
 
                     let highlightClasses = "bg-slate-900/70 border-white/10";
                     if (isSelf) {
                         highlightClasses = "bg-pixelBlue/30 border-pixelBlue border-2 shadow-lg ring-2 ring-pixelBlue/50";
                     } else if (isTeammate) {
                         highlightClasses = "bg-pixelCyan/20 border-pixelCyan/80 border-2";
-                    } else if (isPegMatch) {
-                        highlightClasses = "bg-pixelGold/30 border-pixelGold border-2 shadow-lg ring-2 ring-pixelGold/50";
                     }
 
                     return `
-                        <div id="peg-row-${pegNumber}" class="flex items-center justify-between py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all ${highlightClasses}">
+                        <div class="flex items-center justify-between py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all ${highlightClasses}">
                             <span class="bg-slate-900/90 text-pixelText border border-white/20 font-mono-tabular font-black px-2 py-0.5 rounded-md shrink-0 text-[11px]">
                                 ${pegNumber} ${isMobility ? '<span class="text-pixelGold font-black ml-0.5">[A]</span>' : ''}
                             </span>
