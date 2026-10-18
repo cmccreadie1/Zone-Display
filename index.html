@@ -142,16 +142,6 @@
         <!-- MAIN VIEWER CONTENT CONTAINER -->
         <div id="viewerMainContent" class="hidden space-y-4 sm:space-y-6">
 
-            <!-- ZONE OVERVIEW & QUICK STATS BANNER -->
-            <div id="zoneOverviewStatsBanner" class="glass-card p-4 sm:p-6 space-y-3">
-                <h3 class="text-xs font-black uppercase tracking-wider text-pixelBlue font-heading flex items-center gap-1.5">
-                    <i class="fa-solid fa-chart-pie"></i> Match Overview & Zone Allocations
-                </h3>
-                <div id="zoneStatsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <!-- Dynamic stats cards populate here -->
-                </div>
-            </div>
-
             <!-- SECTION 1: PERSONAL ANGLER LOOKUP (TOP DASHBOARD) -->
             <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
                 <div class="space-y-2 relative">
@@ -163,7 +153,7 @@
                         <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
-                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN (RESTRICTED MAX-HEIGHT FOR MOBILE VIRTUAL KEYBOARDS) -->
+                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
                     <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-40 sm:max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
                 </div>
 
@@ -171,7 +161,7 @@
                 <div id="personalResultCardContainer"></div>
             </div>
 
-            <!-- SECTION 2: FULL VENUE BEACH MATRIX & TEAM FILTER -->
+            <!-- SECTION 2: FULL VENUE BEACH MATRIX -->
             <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/20 pb-4">
                     <div>
@@ -181,23 +171,14 @@
                         <p class="text-xs text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <!-- TEAM FILTER DROPDOWN -->
-                        <div class="flex-1 sm:flex-none min-w-[140px]">
-                            <select id="teamFilterSelect" onchange="renderFullBeachMatrix()" class="w-full bg-slate-900/90 border border-white/25 rounded-xl px-3 py-2 text-pixelText font-bold text-xs uppercase tracking-wider focus:outline-none focus:border-pixelBlue">
-                                <option value="ALL">All Teams / Individuals</option>
-                            </select>
-                        </div>
-
-                        <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
-                        <div id="beachDayToggleGroup" class="flex items-center gap-2 flex-1 sm:flex-none hidden">
-                            <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
-                                Day 1
-                            </button>
-                            <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
-                                Day 2
-                            </button>
-                        </div>
+                    <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
+                    <div id="beachDayToggleGroup" class="flex items-center gap-2 w-full sm:w-auto hidden">
+                        <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
+                            Day 1
+                        </button>
+                        <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
+                            Day 2
+                        </button>
                     </div>
                 </div>
 
@@ -212,9 +193,10 @@
                     <span class="font-mono-tabular text-[10px] text-pixelEmerald">App Version: v7.4.0</span>
                 </div>
                 <ul class="list-disc list-inside space-y-1 text-[11px] leading-relaxed">
-                    <li><strong class="text-pixelText">v7.4.0 Rewrite:</strong> Added Single Source of Truth version tracking for Netlify deployment alignment.</li>
-                    <li><strong class="text-pixelText">Mobile Ergonomics:</strong> Restricted dropdown height and enabled keyboard auto-dismiss &amp; auto-scroll on draw selection.</li>
-                    <li><strong class="text-pixelText">Features:</strong> Integrated Share Draw / Copy Summary, Deep-linking URL params, Match Overview Stats, Interactive Team Filtering, and Web App Offline Caching.</li>
+                    <li><strong class="text-pixelText">v7.4.0 Single Source of Truth:</strong> Aligned Netlify version metadata with application interface.</li>
+                    <li><strong class="text-pixelText">Mobile Keyboard Fixes:</strong> Restricted predictive dropdown height and added keyboard auto-dismiss &amp; auto-scroll to personal draw results.</li>
+                    <li><strong class="text-pixelText">Utilities:</strong> Added Quick "Share Draw" copy functionality, URL parameter deep-linking (`?angler=`), and Service Worker offline caching.</li>
+                    <li><strong class="text-pixelText">Layout:</strong> Simplified full beach matrix to maintain a straightforward view of all venue pegs.</li>
                 </ul>
             </div>
 
@@ -258,8 +240,6 @@
                     if (data && data.anglers && data.draw) {
                         viewerData = data;
                         renderHeaderDetails();
-                        populateTeamFilterOptions();
-                        renderMatchOverviewStats();
                         document.getElementById('noDataPanel').classList.add('hidden');
                         document.getElementById('viewerMainContent').classList.remove('hidden');
                         
@@ -295,42 +275,6 @@
             const dayToggleGroup = document.getElementById('beachDayToggleGroup');
             if (matchDuration === 2) dayToggleGroup.classList.remove('hidden');
             else dayToggleGroup.classList.add('hidden');
-        }
-
-        function renderMatchOverviewStats() {
-            const container = document.getElementById('zoneStatsGrid');
-            if (!viewerData || !viewerData.draw) return;
-
-            const drawList = viewerData.draw.day1 || [];
-            
-            container.innerHTML = ZONE_COLORS.map(color => {
-                const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
-                const mobilityCount = zonePegs.filter(d => {
-                    const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
-                    return angler && (angler.mobility || angler.mob);
-                }).length;
-
-                return `
-                    <div class="glass-card-sm p-2.5 border-l-4 border-${color.toLowerCase()}-400 space-y-1">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-pixelMuted block font-heading">${color} Zone</span>
-                        <div class="flex items-baseline justify-between font-mono-tabular">
-                            <span class="text-base sm:text-lg font-black text-pixelText">${zonePegs.length} Pegs</span>
-                            ${mobilityCount > 0 ? `<span class="text-[10px] font-bold text-pixelGold">[A] ${mobilityCount}</span>` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function populateTeamFilterOptions() {
-            const select = document.getElementById('teamFilterSelect');
-            if (!viewerData || !viewerData.teams) return;
-
-            const optionsHTML = ['<option value="ALL">All Teams / Individuals</option>'];
-            viewerData.teams.forEach(t => {
-                optionsHTML.push(`<option value="${t.id}">${(t.name || 'Unnamed Team').toUpperCase()}</option>`);
-            });
-            select.innerHTML = optionsHTML.join('');
         }
 
         function setupClickOutsideListener() {
@@ -375,7 +319,7 @@
 
             if (matches.length > 0) {
                 dropdown.innerHTML = matches.map(a => {
-                    const team = viewerData.teams.find(t => t.id === a.teamId);
+                    const team = viewerData.teams ? viewerData.teams.find(t => t.id === a.teamId) : null;
                     return `
                         <div data-angler-id="${a.id}" onclick="selectAnglerFromDropdown('${a.id}')" class="px-3.5 py-2.5 rounded-xl hover:bg-pixelBlue/20 cursor-pointer flex items-center justify-between border border-transparent hover:border-pixelBlue/40 transition-all">
                             <span class="font-black text-pixelText font-heading text-sm uppercase">${(a.name || 'Unnamed').toUpperCase()}</span>
@@ -403,12 +347,12 @@
                 input.value = targetAngler.name;
                 document.getElementById('searchResultsDropdown').classList.add('hidden');
                 
-                // Auto-blur to dismiss mobile virtual keyboard
+                // Dismiss mobile virtual keyboard
                 input.blur();
                 
                 renderPersonalCard(targetAngler);
                 
-                // Smooth scroll to personal result card so it isn't hidden by keyboard
+                // Smooth scroll to personal result card so it isn't covered by keyboard
                 setTimeout(() => {
                     const cardContainer = document.getElementById('personalResultCardContainer');
                     if (cardContainer) {
@@ -591,11 +535,11 @@
             const btn2 = document.getElementById('beachDayBtn2');
 
             if (day === 1) {
-                btn1.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
-                btn2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn1.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
+                btn2.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
             } else {
-                btn1.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
-                btn2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
+                btn1.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn2.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
             }
 
             renderFullBeachMatrix();
@@ -605,18 +549,10 @@
             const container = document.getElementById('fullBeachZoneGrid');
             if (!viewerData || !viewerData.draw) return;
 
-            const selectedTeamId = document.getElementById('teamFilterSelect')?.value || 'ALL';
             const drawList = activeBeachDay === 1 ? (viewerData.draw.day1 || []) : (viewerData.draw.day2 || []);
 
             container.innerHTML = ZONE_COLORS.map(color => {
-                let zonePegs = drawList.filter(d => (d.zone || d.z) === color);
-
-                if (selectedTeamId !== 'ALL') {
-                    zonePegs = zonePegs.filter(d => {
-                        const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
-                        return angler && angler.teamId === selectedTeamId;
-                    });
-                }
+                const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
 
                 zonePegs.sort((a,b) => {
                     let numA = parseInt(a.peg || a.p) || 0;
@@ -626,7 +562,7 @@
 
                 const pegRowsHTML = zonePegs.map(d => {
                     const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
-                    const team = angler ? viewerData.teams.find(t => t.id === angler.teamId) : null;
+                    const team = angler && viewerData.teams ? viewerData.teams.find(t => t.id === angler.teamId) : null;
 
                     const pegNumber = d.peg || d.p;
                     const isMobility = angler && (angler.mobility || angler.mob);
