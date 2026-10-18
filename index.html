@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shorescore Competitor Draw Viewer</title>
+    <title>Shorescore Competitor Draw Viewer v7.4.0</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -112,7 +113,10 @@
                 </div>
                 <div>
                     <h1 id="headerCompTitle" class="text-lg sm:text-2xl font-black font-heading text-pixelText leading-none uppercase tracking-wider">Shorescore Draw Viewer</h1>
-                    <span id="headerDurationBadge" class="text-[10px] sm:text-[11px] font-black text-pixelEmerald uppercase tracking-wider font-heading block mt-0.5">Live Competitor Allocations</span>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span id="headerDurationBadge" class="text-[10px] sm:text-[11px] font-black text-pixelEmerald uppercase tracking-wider font-heading block">Live Competitor Allocations</span>
+                        <span class="text-[10px] font-mono-tabular text-pixelMuted bg-slate-900 px-1.5 py-0.2 rounded border border-white/10" title="Single Source of Truth App Version">v7.4.0</span>
+                    </div>
                 </div>
             </div>
 
@@ -138,6 +142,16 @@
         <!-- MAIN VIEWER CONTENT CONTAINER -->
         <div id="viewerMainContent" class="hidden space-y-4 sm:space-y-6">
 
+            <!-- ZONE OVERVIEW & QUICK STATS BANNER -->
+            <div id="zoneOverviewStatsBanner" class="glass-card p-4 sm:p-6 space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-pixelBlue font-heading flex items-center gap-1.5">
+                    <i class="fa-solid fa-chart-pie"></i> Match Overview & Zone Allocations
+                </h3>
+                <div id="zoneStatsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <!-- Dynamic stats cards populate here -->
+                </div>
+            </div>
+
             <!-- SECTION 1: PERSONAL ANGLER LOOKUP (TOP DASHBOARD) -->
             <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
                 <div class="space-y-2 relative">
@@ -145,19 +159,19 @@
                         <i class="fa-solid fa-magnifying-glass"></i> Find My Draw & Teammates
                     </label>
                     <div class="relative">
-                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" autocomplete="off" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name...">
+                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name...">
                         <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
-                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
-                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
+                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN (RESTRICTED MAX-HEIGHT FOR MOBILE VIRTUAL KEYBOARDS) -->
+                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-40 sm:max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
                 </div>
 
                 <!-- PERSONAL RESULT CARD CONTAINER -->
                 <div id="personalResultCardContainer"></div>
             </div>
 
-            <!-- SECTION 2: FULL VENUE BEACH MATRIX -->
+            <!-- SECTION 2: FULL VENUE BEACH MATRIX & TEAM FILTER -->
             <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/20 pb-4">
                     <div>
@@ -167,19 +181,41 @@
                         <p class="text-xs text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
                     </div>
 
-                    <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
-                    <div id="beachDayToggleGroup" class="flex items-center gap-2 w-full sm:w-auto hidden">
-                        <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
-                            Day 1
-                        </button>
-                        <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
-                            Day 2
-                        </button>
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <!-- TEAM FILTER DROPDOWN -->
+                        <div class="flex-1 sm:flex-none min-w-[140px]">
+                            <select id="teamFilterSelect" onchange="renderFullBeachMatrix()" class="w-full bg-slate-900/90 border border-white/25 rounded-xl px-3 py-2 text-pixelText font-bold text-xs uppercase tracking-wider focus:outline-none focus:border-pixelBlue">
+                                <option value="ALL">All Teams / Individuals</option>
+                            </select>
+                        </div>
+
+                        <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
+                        <div id="beachDayToggleGroup" class="flex items-center gap-2 flex-1 sm:flex-none hidden">
+                            <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
+                                Day 1
+                            </button>
+                            <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
+                                Day 2
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 4-ZONE CARD GRID (NATURAL HEIGHT, NO NESTED SCROLLING) -->
+                <!-- 4-ZONE CARD GRID -->
                 <div id="fullBeachZoneGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start"></div>
+            </div>
+
+            <!-- CHANGE LOG / VERSIONING STRATEGY DISPLAY -->
+            <div class="glass-card-sm p-4 text-xs text-pixelMuted space-y-2 border border-white/10">
+                <div class="flex items-center justify-between border-b border-white/10 pb-1.5">
+                    <span class="font-black uppercase tracking-wider font-heading text-pixelBlue text-sm">Change Log & Single Source of Truth Notes</span>
+                    <span class="font-mono-tabular text-[10px] text-pixelEmerald">App Version: v7.4.0</span>
+                </div>
+                <ul class="list-disc list-inside space-y-1 text-[11px] leading-relaxed">
+                    <li><strong class="text-pixelText">v7.4.0 Rewrite:</strong> Added Single Source of Truth version tracking for Netlify deployment alignment.</li>
+                    <li><strong class="text-pixelText">Mobile Ergonomics:</strong> Restricted dropdown height and enabled keyboard auto-dismiss &amp; auto-scroll on draw selection.</li>
+                    <li><strong class="text-pixelText">Features:</strong> Integrated Share Draw / Copy Summary, Deep-linking URL params, Match Overview Stats, Interactive Team Filtering, and Web App Offline Caching.</li>
+                </ul>
             </div>
 
         </div>
@@ -190,12 +226,23 @@
     <script>
         let viewerData = null;
         let activeBeachDay = 1;
+        let selectedAnglerId = null;
 
         const ZONE_COLORS = ['Red', 'Yellow', 'Green', 'Blue'];
 
         window.addEventListener('DOMContentLoaded', () => {
             loadLiveDrawJSON();
+            setupClickOutsideListener();
+            registerServiceWorker();
         });
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.log('ServiceWorker registration skipped or failed:', err);
+                });
+            }
+        }
 
         function loadLiveDrawJSON() {
             const timestamp = new Date().getTime();
@@ -211,9 +258,17 @@
                     if (data && data.anglers && data.draw) {
                         viewerData = data;
                         renderHeaderDetails();
+                        populateTeamFilterOptions();
+                        renderMatchOverviewStats();
                         document.getElementById('noDataPanel').classList.add('hidden');
                         document.getElementById('viewerMainContent').classList.remove('hidden');
-                        renderPersonalCard(null);
+                        
+                        // Check for deep-link URL parameter ?angler=
+                        checkURLDeepLink();
+                        
+                        if (!selectedAnglerId) {
+                            renderPersonalCard(null);
+                        }
                         renderFullBeachMatrix();
                     } else {
                         showNoDataWarning();
@@ -242,6 +297,68 @@
             else dayToggleGroup.classList.add('hidden');
         }
 
+        function renderMatchOverviewStats() {
+            const container = document.getElementById('zoneStatsGrid');
+            if (!viewerData || !viewerData.draw) return;
+
+            const drawList = viewerData.draw.day1 || [];
+            
+            container.innerHTML = ZONE_COLORS.map(color => {
+                const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
+                const mobilityCount = zonePegs.filter(d => {
+                    const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
+                    return angler && (angler.mobility || angler.mob);
+                }).length;
+
+                return `
+                    <div class="glass-card-sm p-2.5 border-l-4 border-${color.toLowerCase()}-400 space-y-1">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-pixelMuted block font-heading">${color} Zone</span>
+                        <div class="flex items-baseline justify-between font-mono-tabular">
+                            <span class="text-base sm:text-lg font-black text-pixelText">${zonePegs.length} Pegs</span>
+                            ${mobilityCount > 0 ? `<span class="text-[10px] font-bold text-pixelGold">[A] ${mobilityCount}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateTeamFilterOptions() {
+            const select = document.getElementById('teamFilterSelect');
+            if (!viewerData || !viewerData.teams) return;
+
+            const optionsHTML = ['<option value="ALL">All Teams / Individuals</option>'];
+            viewerData.teams.forEach(t => {
+                optionsHTML.push(`<option value="${t.id}">${(t.name || 'Unnamed Team').toUpperCase()}</option>`);
+            });
+            select.innerHTML = optionsHTML.join('');
+        }
+
+        function setupClickOutsideListener() {
+            document.addEventListener('click', (e) => {
+                const searchContainer = document.getElementById('anglerSearchInput')?.parentElement?.parentElement;
+                const dropdown = document.getElementById('searchResultsDropdown');
+                if (searchContainer && !searchContainer.contains(e.target) && dropdown) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        function handleSearchKeyDown(event) {
+            if (event.key === 'Enter') {
+                const dropdown = document.getElementById('searchResultsDropdown');
+                const firstOption = dropdown.querySelector('[data-angler-id]');
+                if (firstOption) {
+                    const anglerId = firstOption.getAttribute('data-angler-id');
+                    selectAnglerFromDropdown(anglerId);
+                } else {
+                    document.getElementById('anglerSearchInput').blur();
+                }
+            } else if (event.key === 'Escape') {
+                document.getElementById('searchResultsDropdown').classList.add('hidden');
+                document.getElementById('anglerSearchInput').blur();
+            }
+        }
+
         function handleAnglerSearch() {
             const query = (document.getElementById('anglerSearchInput').value || '').trim().toLowerCase();
             const dropdown = document.getElementById('searchResultsDropdown');
@@ -249,6 +366,7 @@
             if (query.length < 1) {
                 dropdown.classList.add('hidden');
                 dropdown.innerHTML = '';
+                selectedAnglerId = null;
                 renderPersonalCard(null);
                 return;
             }
@@ -259,7 +377,7 @@
                 dropdown.innerHTML = matches.map(a => {
                     const team = viewerData.teams.find(t => t.id === a.teamId);
                     return `
-                        <div onclick="selectAnglerFromDropdown('${a.id}')" class="px-3.5 py-2.5 rounded-xl hover:bg-pixelBlue/20 cursor-pointer flex items-center justify-between border border-transparent hover:border-pixelBlue/40 transition-all">
+                        <div data-angler-id="${a.id}" onclick="selectAnglerFromDropdown('${a.id}')" class="px-3.5 py-2.5 rounded-xl hover:bg-pixelBlue/20 cursor-pointer flex items-center justify-between border border-transparent hover:border-pixelBlue/40 transition-all">
                             <span class="font-black text-pixelText font-heading text-sm uppercase">${(a.name || 'Unnamed').toUpperCase()}</span>
                             <span class="text-[10px] font-bold text-pixelCyan uppercase tracking-wider">${team ? team.name.toUpperCase() : 'INDIVIDUAL'}</span>
                         </div>
@@ -272,6 +390,7 @@
             }
 
             if (matches.length === 1) {
+                selectedAnglerId = matches[0].id;
                 renderPersonalCard(matches[0]);
             }
         }
@@ -279,16 +398,32 @@
         function selectAnglerFromDropdown(anglerId) {
             const targetAngler = viewerData.anglers.find(a => a.id === anglerId);
             if (targetAngler) {
-                document.getElementById('anglerSearchInput').value = targetAngler.name;
+                selectedAnglerId = targetAngler.id;
+                const input = document.getElementById('anglerSearchInput');
+                input.value = targetAngler.name;
                 document.getElementById('searchResultsDropdown').classList.add('hidden');
+                
+                // Auto-blur to dismiss mobile virtual keyboard
+                input.blur();
+                
                 renderPersonalCard(targetAngler);
+                
+                // Smooth scroll to personal result card so it isn't hidden by keyboard
+                setTimeout(() => {
+                    const cardContainer = document.getElementById('personalResultCardContainer');
+                    if (cardContainer) {
+                        cardContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
             }
         }
 
         function clearSearchInput() {
             document.getElementById('anglerSearchInput').value = '';
             document.getElementById('searchResultsDropdown').classList.add('hidden');
+            selectedAnglerId = null;
             renderPersonalCard(null);
+            updateURLParameter(null);
         }
 
         function renderPersonalCard(targetAngler) {
@@ -303,10 +438,12 @@
                 return;
             }
 
+            updateURLParameter(targetAngler.name);
+
             const matchDuration = viewerData.duration || viewerData.d || 1;
-            const d1Alloc = viewerData.draw.day1.find(d => (d.anglerId || d.aId) === targetAngler.id);
-            const d2Alloc = matchDuration === 2 ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === targetAngler.id) : null;
-            const team = viewerData.teams.find(t => t.id === targetAngler.teamId);
+            const d1Alloc = viewerData.draw.day1 ? viewerData.draw.day1.find(d => (d.anglerId || d.aId) === targetAngler.id) : null;
+            const d2Alloc = (matchDuration === 2 && viewerData.draw.day2) ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === targetAngler.id) : null;
+            const team = viewerData.teams ? viewerData.teams.find(t => t.id === targetAngler.teamId) : null;
 
             const teammates = targetAngler.teamId 
                 ? viewerData.anglers.filter(a => a.teamId === targetAngler.teamId && a.id !== targetAngler.id)
@@ -315,8 +452,8 @@
             let teammateRowsHTML = '';
             if (teammates.length > 0) {
                 teammateRowsHTML = teammates.map(m => {
-                    const mD1 = viewerData.draw.day1.find(d => (d.anglerId || d.aId) === m.id);
-                    const mD2 = matchDuration === 2 ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === m.id) : null;
+                    const mD1 = viewerData.draw.day1 ? viewerData.draw.day1.find(d => (d.anglerId || d.aId) === m.id) : null;
+                    const mD2 = (matchDuration === 2 && viewerData.draw.day2) ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === m.id) : null;
 
                     const mD1Zone = mD1 ? (mD1.zone || mD1.z) : '';
                     const mD1Peg = mD1 ? (mD1.peg || mD1.p) : '';
@@ -351,7 +488,11 @@
                             </div>
                             <span class="text-xs font-black text-pixelCyan uppercase tracking-wider font-heading">${team ? team.name.toUpperCase() : 'INDIVIDUAL COMPETITOR'}</span>
                         </div>
-                        <span class="text-[10px] sm:text-xs font-black glass-pill px-3 py-1 border border-pixelBlue/40 text-pixelBlue font-heading uppercase self-start sm:self-auto">Personal Match Card</span>
+                        <div class="flex items-center gap-2 self-start sm:self-auto">
+                            <button onclick="shareAnglerDraw('${targetAngler.id}')" class="text-xs font-black glass-pill px-3 py-1.5 border border-pixelBlue/40 text-pixelBlue hover:bg-pixelBlue/20 font-heading uppercase flex items-center gap-1.5 transition-all touch-elastic">
+                                <i class="fa-solid fa-share-nodes"></i> Share Draw
+                            </button>
+                        </div>
                     </div>
 
                     <!-- DAY 1 & DAY 2 ALLOCATION TILES -->
@@ -392,17 +533,69 @@
             `;
         }
 
+        function shareAnglerDraw(anglerId) {
+            const angler = viewerData.anglers.find(a => a.id === anglerId);
+            if (!angler) return;
+
+            const matchDuration = viewerData.duration || viewerData.d || 1;
+            const d1 = viewerData.draw.day1 ? viewerData.draw.day1.find(d => (d.anglerId || d.aId) === anglerId) : null;
+            const d2 = (matchDuration === 2 && viewerData.draw.day2) ? viewerData.draw.day2.find(d => (d.anglerId || d.aId) === anglerId) : null;
+
+            let summaryText = `${angler.name} — `;
+            if (d1) summaryText += `Day 1: ${d1.zone || d1.z} Zone Peg ${d1.peg || d1.p}`;
+            if (d2) summaryText += ` | Day 2: ${d2.zone || d2.z} Zone Peg ${d2.peg || d2.p}`;
+
+            const shareUrl = window.location.origin + window.location.pathname + '?angler=' + encodeURIComponent(angler.name);
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Shorescore Draw Allocation',
+                    text: summaryText,
+                    url: shareUrl
+                }).catch(() => copyToClipboard(summaryText + ' ' + shareUrl));
+            } else {
+                copyToClipboard(summaryText + ' ' + shareUrl);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Draw summary and link copied to clipboard!');
+            }).catch(() => {
+                alert(text);
+            });
+        }
+
+        function updateURLParameter(name) {
+            if (history.pushState) {
+                const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + (name ? '?angler=' + encodeURIComponent(name) : '');
+                window.history.pushState({path: newurl}, '', newurl);
+            }
+        }
+
+        function checkURLDeepLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const anglerParam = urlParams.get('angler');
+            if (anglerParam && viewerData && viewerData.anglers) {
+                const match = viewerData.anglers.find(a => (a.name || '').toLowerCase() === anglerParam.toLowerCase());
+                if (match) {
+                    document.getElementById('anglerSearchInput').value = match.name;
+                    selectAnglerFromDropdown(match.id);
+                }
+            }
+        }
+
         function setBeachViewDay(day) {
             activeBeachDay = day;
             const btn1 = document.getElementById('beachDayBtn1');
             const btn2 = document.getElementById('beachDayBtn2');
 
             if (day === 1) {
-                btn1.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
-                btn2.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn1.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
+                btn2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
             } else {
-                btn1.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
-                btn2.className = "flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
+                btn1.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn2.className = "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
             }
 
             renderFullBeachMatrix();
@@ -412,10 +605,18 @@
             const container = document.getElementById('fullBeachZoneGrid');
             if (!viewerData || !viewerData.draw) return;
 
-            const drawList = activeBeachDay === 1 ? viewerData.draw.day1 : viewerData.draw.day2;
+            const selectedTeamId = document.getElementById('teamFilterSelect')?.value || 'ALL';
+            const drawList = activeBeachDay === 1 ? (viewerData.draw.day1 || []) : (viewerData.draw.day2 || []);
 
             container.innerHTML = ZONE_COLORS.map(color => {
-                const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
+                let zonePegs = drawList.filter(d => (d.zone || d.z) === color);
+
+                if (selectedTeamId !== 'ALL') {
+                    zonePegs = zonePegs.filter(d => {
+                        const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
+                        return angler && angler.teamId === selectedTeamId;
+                    });
+                }
 
                 zonePegs.sort((a,b) => {
                     let numA = parseInt(a.peg || a.p) || 0;
