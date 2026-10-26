@@ -112,6 +112,15 @@
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(168, 199, 250, 0.5); border-radius: 9999px; }
+
+        /* KEYBOARD VISIBILITY DROPDOWN POSITIONING FOR MOBILE */
+        @media (max-width: 640px) {
+            .predictive-dropdown-mobile {
+                bottom: 100% !important;
+                top: auto !important;
+                margin-bottom: 0.5rem !important;
+            }
+        }
     </style>
 </head>
 <body id="appBody" class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
@@ -151,16 +160,6 @@
         <!-- MAIN VIEWER CONTENT CONTAINER -->
         <div id="viewerMainContent" class="hidden space-y-4 sm:space-y-6">
 
-            <!-- ZONE OVERVIEW & QUICK STATS BANNER -->
-            <div id="zoneOverviewStatsBanner" class="glass-card p-4 sm:p-6 space-y-3">
-                <h3 class="text-xs font-black uppercase tracking-wider text-pixelBlue font-heading flex items-center gap-1.5">
-                    <i class="fa-solid fa-chart-pie"></i> Match Overview & Zone Allocations
-                </h3>
-                <div id="zoneStatsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <!-- Dynamic stats cards populate here -->
-                </div>
-            </div>
-
             <!-- SECTION 1: PERSONAL ANGLER LOOKUP (TOP DASHBOARD) -->
             <div class="glass-card p-4 sm:p-8 space-y-4 sm:space-y-6">
                 <div class="space-y-2 relative">
@@ -172,8 +171,8 @@
                         <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
-                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
-                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-40 sm:max-h-60 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
+                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN (FLOATS ABOVE SEARCH BAR ON MOBILE TO PREVENT KEYBOARD OVERLAP) -->
+                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 predictive-dropdown-mobile sm:top-full sm:bottom-auto sm:mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-44 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
                 </div>
 
                 <!-- PERSONAL RESULT CARD CONTAINER -->
@@ -269,7 +268,6 @@
                     if (data && data.anglers && data.draw) {
                         viewerData = data;
                         renderHeaderDetails();
-                        renderMatchOverviewStats();
                         document.getElementById('noDataPanel').classList.add('hidden');
                         document.getElementById('viewerMainContent').classList.remove('hidden');
                         
@@ -305,31 +303,6 @@
             const dayToggleGroup = document.getElementById('beachDayToggleGroup');
             if (matchDuration === 2) dayToggleGroup.classList.remove('hidden');
             else dayToggleGroup.classList.add('hidden');
-        }
-
-        function renderMatchOverviewStats() {
-            const container = document.getElementById('zoneStatsGrid');
-            if (!viewerData || !viewerData.draw) return;
-
-            const drawList = activeBeachDay === 1 ? (viewerData.draw.day1 || []) : (viewerData.draw.day2 || []);
-            
-            container.innerHTML = ZONE_COLORS.map(color => {
-                const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
-                const mobilityCount = zonePegs.filter(d => {
-                    const angler = viewerData.anglers.find(a => a.id === (d.anglerId || d.aId));
-                    return angler && (angler.mobility || angler.mob);
-                }).length;
-
-                return `
-                    <div class="glass-card-sm p-3 border-l-4 border-${color.toLowerCase()}-400 space-y-1">
-                        <span class="text-[11px] font-black uppercase tracking-wider text-pixelMuted block font-heading">${color} Zone</span>
-                        <div class="flex items-baseline justify-between font-mono-tabular">
-                            <span class="text-lg font-black text-pixelText">${zonePegs.length} Pegs</span>
-                            ${mobilityCount > 0 ? `<span class="text-[10px] font-bold text-pixelGold bg-pixelGold/10 px-1.5 py-0.5 rounded">[A] ${mobilityCount}</span>` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
         function setupClickOutsideListener() {
@@ -377,9 +350,9 @@
                 dropdown.innerHTML = matches.map(a => {
                     const team = viewerData.teams ? viewerData.teams.find(t => t.id === a.teamId) : null;
                     return `
-                        <div data-angler-id="${a.id}" onclick="selectAnglerFromDropdown('${a.id}')" class="px-3.5 py-2.5 rounded-xl hover:bg-pixelBlue/20 cursor-pointer flex items-center justify-between border border-transparent hover:border-pixelBlue/40 transition-all">
-                            <span class="font-black text-pixelText font-heading text-sm uppercase">${(a.name || 'Unnamed').toUpperCase()}</span>
-                            <span class="text-[10px] font-bold text-pixelCyan uppercase tracking-wider">${team ? team.name.toUpperCase() : 'INDIVIDUAL'}</span>
+                        <div data-angler-id="${a.id}" onclick="selectAnglerFromDropdown('${a.id}')" class="px-3 py-2 rounded-xl hover:bg-pixelBlue/20 cursor-pointer flex items-center justify-between border border-transparent hover:border-pixelBlue/40 transition-all">
+                            <span class="font-black text-pixelText font-heading text-xs sm:text-sm uppercase">${(a.name || 'Unnamed').toUpperCase()}</span>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-pixelCyan uppercase tracking-wider">${team ? team.name.toUpperCase() : 'INDIVIDUAL'}</span>
                         </div>
                     `;
                 }).join('');
@@ -498,14 +471,13 @@
                         </button>
                     </div>
 
-                    <!-- DAY 1 & DAY 2 ALLOCATION TILES -->
+                    <!-- DAY 1 & DAY 2 ALLOCATION TILES (CLEAN NUMBER ONLY) -->
                     <div class="grid grid-cols-1 ${matchDuration === 2 ? 'sm:grid-cols-2' : ''} gap-3 sm:gap-4">
                         <div class="glass-card-sm p-3.5 sm:p-4 space-y-1.5 border border-white/20 text-center">
                             <span class="text-[11px] font-black text-pixelMuted uppercase tracking-wider font-heading block">Day 1 Placement</span>
                             ${d1Alloc ? `
-                                <div class="zone-badge-${d1Zone} rounded-xl py-2.5 px-3 shadow-lg">
-                                    <span class="block text-[11px] font-black uppercase tracking-wider font-heading">${d1Zone} Zone</span>
-                                    <span class="text-2xl sm:text-4xl font-black font-mono-tabular">Peg ${d1Peg}</span>
+                                <div class="zone-badge-${d1Zone} rounded-xl py-3 px-3 shadow-lg">
+                                    <span class="text-3xl sm:text-5xl font-black font-mono-tabular">PEG ${d1Peg}</span>
                                 </div>
                             ` : '<span class="text-pixelMuted italic text-xs">Unassigned</span>'}
                         </div>
@@ -514,9 +486,8 @@
                             <div class="glass-card-sm p-3.5 sm:p-4 space-y-1.5 border border-white/20 text-center">
                                 <span class="text-[11px] font-black text-pixelMuted uppercase tracking-wider font-heading block">Day 2 Placement</span>
                                 ${d2Alloc ? `
-                                    <div class="zone-badge-${d2Zone} rounded-xl py-2.5 px-3 shadow-lg">
-                                        <span class="block text-[11px] font-black uppercase tracking-wider font-heading">${d2Zone} Zone</span>
-                                        <span class="text-2xl sm:text-4xl font-black font-mono-tabular">Peg ${d2Peg}</span>
+                                    <div class="zone-badge-${d2Zone} rounded-xl py-3 px-3 shadow-lg">
+                                        <span class="text-3xl sm:text-5xl font-black font-mono-tabular">PEG ${d2Peg}</span>
                                     </div>
                                 ` : '<span class="text-pixelMuted italic text-xs">Unassigned</span>'}
                             </div>
@@ -546,7 +517,6 @@
 
             let html = '';
 
-            // Helper to find neighbors in a day's draw
             const getNeighborsForDay = (drawList, dayLabel) => {
                 const userAlloc = drawList ? drawList.find(d => (d.anglerId || d.aId) === anglerId) : null;
                 if (!userAlloc) return `<div class="glass-card-sm p-3 text-xs text-pixelMuted italic text-center">${dayLabel}: No placement found</div>`;
@@ -634,7 +604,6 @@
                 dayBadge.innerText = "Day 2";
             }
 
-            renderMatchOverviewStats();
             renderFullBeachMatrix();
         }
 
