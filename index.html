@@ -632,7 +632,7 @@
 
                     let highlightClasses = "bg-slate-900/70 border-white/10";
                     if (isSelf) {
-                        highlightClasses = "bg-pixelBlue/30 border-pixelBlue border-2 shadow-lg ring-2 ring-pixelBlue/50";
+                        highlightClasses = "bg-pixelBlue/35 border-pixelBlue border-2 shadow-lg ring-2 ring-pixelBlue/50";
                     } else if (isTeammate) {
                         highlightClasses = "bg-pixelCyan/20 border-pixelCyan/80 border-2";
                     }
@@ -644,8 +644,8 @@
                             </span>
                             <div class="text-right min-w-0 flex-grow ml-2.5">
                                 <span class="block font-black uppercase tracking-wider text-pixelText font-heading truncate text-xs flex items-center justify-end gap-1">
-                                    ${isSelf ? '<i class="fa-solid fa-user text-pixelBlue text-[10px]"></i>' : ''}
-                                    ${isTeammate ? '<i class="fa-solid fa-users text-pixelCyan text-[10px]"></i>' : ''}
+                                    ${isSelf ? '<span class="bg-pixelBlue text-slate-950 font-black text-[9px] px-1.5 py-0.2 rounded uppercase font-heading flex items-center gap-0.5"><i class="fa-solid fa-user text-[8px]"></i> MY PEG</span>' : ''}
+                                    ${isTeammate ? '<span class="bg-pixelCyan/80 text-slate-950 font-black text-[9px] px-1.5 py-0.2 rounded uppercase font-heading flex items-center gap-0.5"><i class="fa-solid fa-users text-[8px]"></i> TEAMMATE</span>' : ''}
                                     ${(angler && angler.name ? angler.name : 'Unnamed').toUpperCase()}
                                 </span>
                                 <span class="block text-[9px] font-bold text-pixelMuted uppercase tracking-wider truncate">${team ? team.name.toUpperCase() : 'INDIVIDUAL'}</span>
@@ -657,7 +657,7 @@
                 return `
                     <div class="glass-card-sm p-3.5 space-y-2.5 zone-card-${color}">
                         <div class="flex items-center justify-between pb-2 border-b border-white/20 sticky top-[10px] bg-slate-900/95 backdrop-blur-md pt-1 z-10 rounded-t-lg">
-                            <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} Zone (${dayLabel})</span>
+                            <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} (${dayLabel})</span>
                             <span class="text-[11px] font-mono-tabular font-black glass-pill px-2.5 py-0.5 border border-white/30 text-white">${zonePegs.length} Pegs</span>
                         </div>
                         <div class="space-y-1.5">${pegRowsHTML || '<span class="text-pixelMuted italic text-xs">No allocations</span>'}</div>
