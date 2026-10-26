@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zone Display</title>
+    <title>View your matchday pegs</title>
+
+    <!-- WhatsApp & Social Media Preview Metadata -->
+    <meta property="og:title" content="View your matchday pegs">
+    <meta property="og:description" content="Click the link below to view">
+    <meta name="description" content="Click the link below to view">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -72,15 +78,6 @@
             transition: border-color 0.4s ease, background 0.4s ease;
         }
 
-        .glass-header {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1.5px solid rgba(255, 255, 255, 0.22);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 15px 30px -10px rgba(0, 0, 0, 0.5);
-            border-radius: 20px;
-        }
-
         body.day2-active .glass-card-day-matrix {
             background: rgba(45, 26, 14, 0.8) !important;
             border-color: rgba(253, 224, 71, 0.35) !important;
@@ -121,31 +118,11 @@
         .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(168, 199, 250, 0.5); border-radius: 9999px; }
-
-        /* KEYBOARD VISIBILITY DROPDOWN POSITIONING FOR MOBILE */
-        @media (max-width: 640px) {
-            .predictive-dropdown-mobile {
-                bottom: 100% !important;
-                top: auto !important;
-                margin-bottom: 0.5rem !important;
-            }
-        }
     </style>
 </head>
 <body id="appBody" class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
 
-    <!-- STREAMLINED FLOATING GLASS HEADER -->
-    <div class="sticky top-2 sm:top-3 z-40 px-2.5 sm:px-6 max-w-5xl mx-auto w-full">
-        <header class="glass-header px-4 py-2.5 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <h1 class="text-xl sm:text-2xl font-black font-heading text-pixelText leading-none uppercase tracking-wider">Zone Display</h1>
-                <span id="headerDurationBadge" class="text-[10px] sm:text-[11px] font-black text-pixelEmerald uppercase tracking-wider font-heading block">Live Allocations</span>
-            </div>
-            <span id="headerCompTitle" class="text-xs sm:text-sm font-bold text-pixelMuted uppercase tracking-wider truncate max-w-[150px] sm:max-w-xs text-right"></span>
-        </header>
-    </div>
-
-    <main class="max-w-5xl mx-auto px-2.5 sm:px-6 py-3 sm:py-4 w-full space-y-4 sm:space-y-6 flex-grow">
+    <main class="max-w-5xl mx-auto px-2.5 sm:px-6 py-4 sm:py-6 w-full space-y-4 sm:space-y-6 flex-grow">
 
         <!-- NO DATA / MISSING JSON WARNING -->
         <div id="noDataPanel" class="glass-card p-6 sm:p-12 text-center space-y-4 mt-2">
@@ -173,7 +150,7 @@
                     </div>
 
                     <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
-                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 predictive-dropdown-mobile sm:top-full sm:bottom-auto sm:mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-44 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
+                    <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-44 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
                 </div>
 
                 <!-- PERSONAL RESULT CARD CONTAINER -->
@@ -209,7 +186,7 @@
                         <span id="activeDayBannerText" class="text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelBlue flex items-center gap-2">
                             <i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 1 ALLOCATIONS
                         </span>
-                        <span id="activeDayBannerBadge" class="text-[10px] font-black uppercase tracking-wider bg-pixelBlue text-slate-950 px-2 py-0.5 rounded font-heading">
+                        <span id="activeDayBannerBadge" class="text-[10px] font-black uppercase tracking-wider bg-pixelBlue text-slate-950 px-2.5 py-0.5 rounded font-heading shadow">
                             Day 1 Active
                         </span>
                     </div>
@@ -306,12 +283,9 @@
         }
 
         function renderHeaderDetails() {
-            document.getElementById('headerCompTitle').innerText = viewerData.title || viewerData.t || "Shore Competition";
-            
             const matchDuration = viewerData.duration || viewerData.d || 1;
-            document.getElementById('headerDurationBadge').innerText = matchDuration === 2 ? '2-Day Match' : '1-Day Match';
-
             const dayToggleGroup = document.getElementById('beachDayToggleGroup');
+
             if (matchDuration === 2) dayToggleGroup.classList.remove('hidden');
             else dayToggleGroup.classList.add('hidden');
         }
@@ -682,7 +656,7 @@
 
                 return `
                     <div class="glass-card-sm p-3.5 space-y-2.5 zone-card-${color}">
-                        <div class="flex items-center justify-between pb-2 border-b border-white/20 sticky top-[60px] bg-slate-900/95 backdrop-blur-md pt-1 z-10 rounded-t-lg">
+                        <div class="flex items-center justify-between pb-2 border-b border-white/20 sticky top-[10px] bg-slate-900/95 backdrop-blur-md pt-1 z-10 rounded-t-lg">
                             <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} Zone (${dayLabel})</span>
                             <span class="text-[11px] font-mono-tabular font-black glass-pill px-2.5 py-0.5 border border-white/30 text-white">${zonePegs.length} Pegs</span>
                         </div>
