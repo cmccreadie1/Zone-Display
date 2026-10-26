@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shorescore Competitor Draw Viewer</title>
+    <title>Zone Display</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -72,6 +72,15 @@
             transition: border-color 0.4s ease, background 0.4s ease;
         }
 
+        .glass-header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), 0 15px 30px -10px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+        }
+
         body.day2-active .glass-card-day-matrix {
             background: rgba(45, 26, 14, 0.8) !important;
             border-color: rgba(253, 224, 71, 0.35) !important;
@@ -125,29 +134,21 @@
 </head>
 <body id="appBody" class="min-h-screen flex flex-col antialiased selection:bg-pixelBlue selection:text-slate-950 pb-12">
 
-    <!-- HEADER BAR -->
-    <header class="bg-slate-950/85 backdrop-blur-2xl border-b border-white/20 sticky top-0 z-40 shadow-2xl">
-        <div class="max-w-5xl mx-auto px-3.5 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-pixelBlue/25 border border-pixelBlue/50 flex items-center justify-center text-pixelBlue shrink-0">
-                    <i class="fa-solid fa-water text-lg sm:text-xl"></i>
-                </div>
-                <div>
-                    <h1 id="headerCompTitle" class="text-lg sm:text-2xl font-black font-heading text-pixelText leading-none uppercase tracking-wider">Shorescore Draw Viewer</h1>
-                    <span id="headerDurationBadge" class="text-[10px] sm:text-[11px] font-black text-pixelEmerald uppercase tracking-wider font-heading block mt-0.5">Live Competitor Allocations</span>
-                </div>
+    <!-- STREAMLINED FLOATING GLASS HEADER -->
+    <div class="sticky top-2 sm:top-3 z-40 px-2.5 sm:px-6 max-w-5xl mx-auto w-full">
+        <header class="glass-header px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <h1 class="text-xl sm:text-2xl font-black font-heading text-pixelText leading-none uppercase tracking-wider">Zone Display</h1>
+                <span id="headerDurationBadge" class="text-[10px] sm:text-[11px] font-black text-pixelEmerald uppercase tracking-wider font-heading block">Live Allocations</span>
             </div>
+            <span id="headerCompTitle" class="text-xs sm:text-sm font-bold text-pixelMuted uppercase tracking-wider truncate max-w-[150px] sm:max-w-xs text-right"></span>
+        </header>
+    </div>
 
-            <span id="headerTotalAnglersBadge" class="text-[11px] sm:text-xs font-black glass-pill px-3 py-1 text-pixelBlue border border-pixelBlue/40 font-mono-tabular uppercase shrink-0">
-                0 Anglers
-            </span>
-        </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-2.5 sm:px-6 py-4 sm:py-6 w-full space-y-4 sm:space-y-6 flex-grow">
+    <main class="max-w-5xl mx-auto px-2.5 sm:px-6 py-3 sm:py-4 w-full space-y-4 sm:space-y-6 flex-grow">
 
         <!-- NO DATA / MISSING JSON WARNING -->
-        <div id="noDataPanel" class="glass-card p-6 sm:p-12 text-center space-y-4">
+        <div id="noDataPanel" class="glass-card p-6 sm:p-12 text-center space-y-4 mt-2">
             <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-pixelCoral/25 border border-pixelCoral/50 flex items-center justify-center text-pixelCoral mx-auto">
                 <i class="fa-solid fa-file-circle-exclamation text-2xl sm:text-3xl"></i>
             </div>
@@ -171,7 +172,7 @@
                         <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
-                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN (FLOATS ABOVE SEARCH BAR ON MOBILE TO PREVENT KEYBOARD OVERLAP) -->
+                    <!-- PREDICTIVE NAME AUTOCOMPLETE DROPDOWN -->
                     <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 predictive-dropdown-mobile sm:top-full sm:bottom-auto sm:mt-2 bg-slate-900/95 backdrop-blur-2xl border-2 border-pixelBlue/60 rounded-2xl shadow-2xl z-50 max-h-44 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
                 </div>
 
@@ -181,25 +182,36 @@
 
             <!-- SECTION 2: FULL VENUE BEACH MATRIX -->
             <div id="beachMatrixCard" class="glass-card glass-card-day-matrix p-4 sm:p-8 space-y-4 sm:space-y-6">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/20 pb-4">
-                    <div>
-                        <div class="flex items-center gap-2">
+                
+                <!-- PROMINENT DAY STATUS BANNER & SWITCHER -->
+                <div class="space-y-3 border-b border-white/20 pb-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div>
                             <h3 class="text-lg sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2 uppercase tracking-wider">
                                 <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
                             </h3>
-                            <span id="beachDayHeaderBadge" class="bg-pixelBlue text-slate-950 text-[10px] font-black px-2 py-0.5 rounded font-heading uppercase">Day 1</span>
+                            <p class="text-xs text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
                         </div>
-                        <p class="text-xs text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
+
+                        <!-- SEGMENTED DAY SELECTOR TOGGLE (2-DAY MATCHES) -->
+                        <div id="beachDayToggleGroup" class="bg-slate-950/90 p-1 rounded-2xl border border-white/20 flex items-center gap-1 w-full sm:w-auto hidden">
+                            <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-lg border border-pixelBlue/60 transition-all touch-elastic flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calendar-day"></i> Day 1 Draw
+                            </button>
+                            <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelMuted hover:text-white transition-all touch-elastic flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calendar-check"></i> Day 2 Draw
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- DAY SELECTOR TOGGLE (IF 2-DAY) -->
-                    <div id="beachDayToggleGroup" class="flex items-center gap-2 w-full sm:w-auto hidden">
-                        <button onclick="setBeachViewDay(1)" id="beachDayBtn1" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic">
-                            Day 1
-                        </button>
-                        <button onclick="setBeachViewDay(2)" id="beachDayBtn2" class="flex-1 sm:flex-none px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic">
-                            Day 2
-                        </button>
+                    <!-- LARGE VISUAL ACTIVE DAY ACCENT BANNER -->
+                    <div id="activeDayBanner" class="w-full py-2 px-4 rounded-xl bg-pixelBlue/20 border-2 border-pixelBlue/60 flex items-center justify-between">
+                        <span id="activeDayBannerText" class="text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelBlue flex items-center gap-2">
+                            <i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 1 ALLOCATIONS
+                        </span>
+                        <span id="activeDayBannerBadge" class="text-[10px] font-black uppercase tracking-wider bg-pixelBlue text-slate-950 px-2 py-0.5 rounded font-heading">
+                            Day 1 Active
+                        </span>
                     </div>
                 </div>
 
@@ -297,8 +309,7 @@
             document.getElementById('headerCompTitle').innerText = viewerData.title || viewerData.t || "Shore Competition";
             
             const matchDuration = viewerData.duration || viewerData.d || 1;
-            document.getElementById('headerDurationBadge').innerText = matchDuration === 2 ? '2-Day Competition' : '1-Day Competition';
-            document.getElementById('headerTotalAnglersBadge').innerText = `${viewerData.anglers.length} Anglers`;
+            document.getElementById('headerDurationBadge').innerText = matchDuration === 2 ? '2-Day Match' : '1-Day Match';
 
             const dayToggleGroup = document.getElementById('beachDayToggleGroup');
             if (matchDuration === 2) dayToggleGroup.classList.remove('hidden');
@@ -471,7 +482,7 @@
                         </button>
                     </div>
 
-                    <!-- DAY 1 & DAY 2 ALLOCATION TILES (CLEAN NUMBER ONLY) -->
+                    <!-- DAY 1 & DAY 2 ALLOCATION TILES -->
                     <div class="grid grid-cols-1 ${matchDuration === 2 ? 'sm:grid-cols-2' : ''} gap-3 sm:gap-4">
                         <div class="glass-card-sm p-3.5 sm:p-4 space-y-1.5 border border-white/20 text-center">
                             <span class="text-[11px] font-black text-pixelMuted uppercase tracking-wider font-heading block">Day 1 Placement</span>
@@ -588,20 +599,30 @@
             const btn1 = document.getElementById('beachDayBtn1');
             const btn2 = document.getElementById('beachDayBtn2');
             const body = document.getElementById('appBody');
-            const dayBadge = document.getElementById('beachDayHeaderBadge');
+            const banner = document.getElementById('activeDayBanner');
+            const bannerText = document.getElementById('activeDayBannerText');
+            const bannerBadge = document.getElementById('activeDayBannerBadge');
 
             if (day === 1) {
-                btn1.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-md border border-pixelBlue/60 transition-all touch-elastic";
-                btn2.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
+                btn1.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-lg border border-pixelBlue/60 transition-all touch-elastic flex items-center justify-center gap-2";
+                btn2.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelMuted hover:text-white transition-all touch-elastic flex items-center justify-center gap-2";
                 body.classList.remove('day2-active');
-                dayBadge.className = "bg-pixelBlue text-slate-950 text-[10px] font-black px-2 py-0.5 rounded font-heading uppercase";
-                dayBadge.innerText = "Day 1";
+
+                banner.className = "w-full py-2 px-4 rounded-xl bg-pixelBlue/20 border-2 border-pixelBlue/60 flex items-center justify-between";
+                bannerText.className = "text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelBlue flex items-center gap-2";
+                bannerText.innerHTML = `<i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 1 ALLOCATIONS`;
+                bannerBadge.className = "text-[10px] font-black uppercase tracking-wider bg-pixelBlue text-slate-950 px-2.5 py-0.5 rounded font-heading shadow";
+                bannerBadge.innerText = "Day 1 Active";
             } else {
-                btn1.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-pixelMuted glass-pill hover:text-white transition-all touch-elastic";
-                btn2.className = "px-5 py-2 rounded-xl text-xs font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-md border border-pixelGold/60 transition-all touch-elastic";
+                btn1.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelMuted hover:text-white transition-all touch-elastic flex items-center justify-center gap-2";
+                btn2.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-lg border border-pixelGold/60 transition-all touch-elastic flex items-center justify-center gap-2";
                 body.classList.add('day2-active');
-                dayBadge.className = "bg-pixelGold text-slate-950 text-[10px] font-black px-2 py-0.5 rounded font-heading uppercase";
-                dayBadge.innerText = "Day 2";
+
+                banner.className = "w-full py-2 px-4 rounded-xl bg-pixelGold/20 border-2 border-pixelGold/60 flex items-center justify-between";
+                bannerText.className = "text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelGold flex items-center gap-2";
+                bannerText.innerHTML = `<i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 2 ALLOCATIONS`;
+                bannerBadge.className = "text-[10px] font-black uppercase tracking-wider bg-pixelGold text-slate-950 px-2.5 py-0.5 rounded font-heading shadow";
+                bannerBadge.innerText = "Day 2 Active";
             }
 
             renderFullBeachMatrix();
@@ -613,6 +634,7 @@
 
             const drawList = activeBeachDay === 1 ? (viewerData.draw.day1 || []) : (viewerData.draw.day2 || []);
             const selectedAngler = selectedAnglerId ? viewerData.anglers.find(a => a.id === selectedAnglerId) : null;
+            const dayLabel = activeBeachDay === 1 ? "Day 1" : "Day 2";
 
             container.innerHTML = ZONE_COLORS.map(color => {
                 const zonePegs = drawList.filter(d => (d.zone || d.z) === color);
@@ -661,7 +683,7 @@
                 return `
                     <div class="glass-card-sm p-3.5 space-y-2.5 zone-card-${color}">
                         <div class="flex items-center justify-between pb-2 border-b border-white/20 sticky top-[60px] bg-slate-900/95 backdrop-blur-md pt-1 z-10 rounded-t-lg">
-                            <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} Zone</span>
+                            <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} Zone (${dayLabel})</span>
                             <span class="text-[11px] font-mono-tabular font-black glass-pill px-2.5 py-0.5 border border-white/30 text-white">${zonePegs.length} Pegs</span>
                         </div>
                         <div class="space-y-1.5">${pegRowsHTML || '<span class="text-pixelMuted italic text-xs">No allocations</span>'}</div>
