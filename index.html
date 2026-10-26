@@ -145,7 +145,7 @@
                         <i class="fa-solid fa-magnifying-glass"></i> Find My Draw & Teammates
                     </label>
                     <div class="relative">
-                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder:italic placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name to view your pegs...">
+                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder:italic placeholder:text-xs sm:placeholder:text-sm placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name to view your pegs...">
                         <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
@@ -161,7 +161,7 @@
             <div id="beachMatrixCard" class="glass-card glass-card-day-matrix p-4 sm:p-8 space-y-4 sm:space-y-6">
                 
                 <!-- PROMINENT DAY STATUS BANNER & SWITCHER -->
-                <div class="space-y-3 border-b border-white/20 pb-4">
+                <div class="border-b border-white/20 pb-4">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <h3 class="text-lg sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2 uppercase tracking-wider">
                             <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
@@ -176,16 +176,6 @@
                                 <i class="fa-solid fa-calendar-check"></i> Day 2 Draw
                             </button>
                         </div>
-                    </div>
-
-                    <!-- LARGE VISUAL ACTIVE DAY ACCENT BANNER -->
-                    <div id="activeDayBanner" class="w-full py-2 px-4 rounded-xl bg-pixelBlue/20 border-2 border-pixelBlue/60 flex items-center justify-between">
-                        <span id="activeDayBannerText" class="text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelBlue flex items-center gap-2">
-                            <i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 1 ALLOCATIONS
-                        </span>
-                        <span id="activeDayBannerBadge" class="text-[10px] font-black uppercase tracking-wider bg-pixelBlue text-slate-950 px-2.5 py-0.5 rounded font-heading shadow">
-                            Day 1 Active
-                        </span>
                     </div>
                 </div>
 
@@ -566,30 +556,15 @@
             const btn1 = document.getElementById('beachDayBtn1');
             const btn2 = document.getElementById('beachDayBtn2');
             const body = document.getElementById('appBody');
-            const banner = document.getElementById('activeDayBanner');
-            const bannerText = document.getElementById('activeDayBannerText');
-            const bannerBadge = document.getElementById('activeDayBannerBadge');
 
             if (day === 1) {
                 btn1.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelBlue shadow-lg border border-pixelBlue/60 transition-all touch-elastic flex items-center justify-center gap-2";
                 btn2.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelMuted hover:text-white transition-all touch-elastic flex items-center justify-center gap-2";
                 body.classList.remove('day2-active');
-
-                banner.className = "w-full py-2 px-4 rounded-xl bg-pixelBlue/20 border-2 border-pixelBlue/60 flex items-center justify-between";
-                bannerText.className = "text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelBlue flex items-center gap-2";
-                bannerText.innerHTML = `<i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 1 ALLOCATIONS`;
-                bannerBadge.className = "text-[10px] font-black uppercase tracking-wider bg-pixelBlue text-slate-950 px-2.5 py-0.5 rounded font-heading shadow";
-                bannerBadge.innerText = "Day 1 Active";
             } else {
                 btn1.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelMuted hover:text-white transition-all touch-elastic flex items-center justify-center gap-2";
                 btn2.className = "flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-slate-950 bg-pixelGold shadow-lg border border-pixelGold/60 transition-all touch-elastic flex items-center justify-center gap-2";
                 body.classList.add('day2-active');
-
-                banner.className = "w-full py-2 px-4 rounded-xl bg-pixelGold/20 border-2 border-pixelGold/60 flex items-center justify-between";
-                bannerText.className = "text-xs sm:text-sm font-black font-heading uppercase tracking-wider text-pixelGold flex items-center gap-2";
-                bannerText.innerHTML = `<i class="fa-solid fa-eye text-base"></i> Currently Viewing: DAY 2 ALLOCATIONS`;
-                bannerBadge.className = "text-[10px] font-black uppercase tracking-wider bg-pixelGold text-slate-950 px-2.5 py-0.5 rounded font-heading shadow";
-                bannerBadge.innerText = "Day 2 Active";
             }
 
             renderFullBeachMatrix();
@@ -650,8 +625,8 @@
                 return `
                     <div class="glass-card-sm p-3.5 space-y-2.5 zone-card-${color}">
                         <div class="flex items-center justify-between pb-2 border-b border-white/20 sticky top-[10px] bg-slate-900/95 backdrop-blur-md pt-1 z-10 rounded-t-lg">
-                            <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow">${color} (${dayLabel})</span>
-                            <span class="text-[11px] font-mono-tabular font-black glass-pill px-2.5 py-0.5 border border-white/30 text-white">${zonePegs.length} Pegs</span>
+                            <span class="font-heading uppercase tracking-wider font-black text-sm sm:text-base text-white drop-shadow text-center w-full">${color} (${dayLabel})</span>
+                            <span class="text-[11px] font-mono-tabular font-black glass-pill px-2.5 py-0.5 border border-white/30 text-white shrink-0">${zonePegs.length} Pegs</span>
                         </div>
                         <div class="space-y-1.5">${pegRowsHTML || '<span class="text-pixelMuted italic text-xs">No allocations</span>'}</div>
                     </div>
