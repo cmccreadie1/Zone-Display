@@ -145,7 +145,7 @@
                         <i class="fa-solid fa-magnifying-glass"></i> Find My Draw & Teammates
                     </label>
                     <div class="relative">
-                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name...">
+                        <input type="text" id="anglerSearchInput" onkeyup="handleAnglerSearch()" onkeydown="handleSearchKeyDown(event)" autocomplete="off" inputmode="search" enterkeyhint="search" class="w-full bg-slate-900/90 border border-white/25 rounded-2xl px-4 py-3.5 text-pixelText font-bold text-sm sm:text-base uppercase tracking-wider placeholder:italic placeholder-pixelMuted focus:outline-none focus:border-pixelBlue" placeholder="Type your name to view your pegs...">
                         <button onclick="clearSearchInput()" class="absolute right-3 top-3 w-8 h-8 rounded-full glass-pill flex items-center justify-center text-pixelMuted hover:text-white font-bold text-lg">&times;</button>
                     </div>
 
@@ -163,12 +163,9 @@
                 <!-- PROMINENT DAY STATUS BANNER & SWITCHER -->
                 <div class="space-y-3 border-b border-white/20 pb-4">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div>
-                            <h3 class="text-lg sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2 uppercase tracking-wider">
-                                <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
-                            </h3>
-                            <p class="text-xs text-pixelMuted font-medium mt-0.5">Browse complete zone allocations across all pegs on the venue.</p>
-                        </div>
+                        <h3 class="text-lg sm:text-2xl font-black font-heading text-pixelText flex items-center gap-2 uppercase tracking-wider">
+                            <i class="fa-solid fa-layer-group text-pixelBlue"></i> Full Beach Venue Layout
+                        </h3>
 
                         <!-- SEGMENTED DAY SELECTOR TOGGLE (2-DAY MATCHES) -->
                         <div id="beachDayToggleGroup" class="bg-slate-950/90 p-1 rounded-2xl border border-white/20 flex items-center gap-1 w-full sm:w-auto hidden">
@@ -391,11 +388,7 @@
             const container = document.getElementById('personalResultCardContainer');
 
             if (!targetAngler) {
-                container.innerHTML = `
-                    <div class="glass-card-sm p-4 sm:p-6 text-center text-pixelMuted font-bold text-xs sm:text-sm">
-                        Type your name in the search box above to view your and your teammates Day 1 & Day 2 pegs. 
-                    </div>
-                `;
+                container.innerHTML = '';
                 return;
             }
 
